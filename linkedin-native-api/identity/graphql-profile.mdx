@@ -1,0 +1,42 @@
+---
+title: 'GraphQL Profile'
+description: 'Obtener datos de perfil mediante GraphQL (followers, connections)'
+---
+
+# GET /graphql?variables=(vanityName:{publicIdentifier})&queryId=...
+
+Obtiene información completa del perfil usando GraphQL, incluyendo número de followers y connections.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/graphql
+```
+
+## Query Parameters
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `variables` | string | `(vanityName:{publicIdentifier})` o `(profileUrn:{urn})` |
+| `queryId` | string | ID de la query GraphQL |
+
+## Query IDs Comunes
+
+- `voyagerIdentityDashProfiles.a1a483e719b20537a256b6853cdca711` - Datos de perfil completos
+- `voyagerIdentityDashProfiles.34ead06db82a2cc9a778fac97f69ad6a` - Datos básicos
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/graphql?variables=(vanityName:john-doe)&queryId=voyagerIdentityDashProfiles.a1a483e719b20537a256b6853cdca711" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID" \\
+  -H "X-Li-User-Agent: LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881"
+```
+
+## Respuesta
+
+Incluye followers, connections, y datos completos del perfil.
+
+## Código de Implementación
+
+Ver [app/services/user_data.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\user_data.py) línea 81.

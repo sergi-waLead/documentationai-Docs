@@ -1,0 +1,240 @@
+---
+title: 'Autenticación con LinkedIn Native API'
+description: 'Cómo autenticarse en los endpoints nativos de LinkedIn usando cookies de sesión'
+---
+
+# Autenticación
+
+Los endpoints nativos de LinkedIn utilizan **autenticación basada en cookies** en lugar de tokens JWT. Necesitas obtener las cookies de sesión de una cuenta de LinkedIn activa.
+
+## Cookies Requeridas
+
+Para autenticarte en los endpoints nativos de LinkedIn, necesitas estas cookies:
+
+| Cookie | Descripción | Formato |
+|--------|-------------|---------|
+| `li_at` | Token de autenticación principal | String largo alfanumérico |
+| `JSESSIONID` | ID de sesión | Prefijo `ajax:` + string alfanumérico |
+
+## Cómo Obtener las Cookies
+
+### Opción 1: Desde el Navegador (Manual)
+
+1. Inicia sesión en [LinkedIn](https://www.linkedin.com) en tu navegador
+2. Abre las **DevTools** (F12)
+3. Ve a la pestaña **Application** > **Cookies** > `https://www.linkedin.com`
+4. Copia los valores de `li_at` y `JSESSIONID`
+
+<Callout kind="alert">
+  Las cookies expiran después de cierto tiempo (generalmente 365 días para `li_at` y 24 horas para `JSESSIONID`). Necesitarás renovarlas periódicamente.
+</Callout>
+
+### Opción 2: Programáticamente
+
+Puedes obtener las cookies usando Selenium o Playwright para automatizar el login:
+
+```python
+from selenium import webdriver
+
+driver = webdriver.Chrome()
+driver.get("https://www.linkedin.com")
+
+# Login manual o automatizado...
+
+# Obtener cookies
+li_at = driver.get_cookie('li_at')['value']
+jsessionid = driver.get_cookie('JSESSIONID')['value']
+```
+
+## Headers Requeridos
+
+Además de las cookies, necesitas incluir estos headers en cada request:
+
+```python
+headers = {
+    'Cookie': f'li_at={li_at}; JSESSIONID=ajax:{jsessionid}',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
+    'X-Li-User-Agent': 'LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881',
+    'csrf-token': jsessionid.replace('ajax:', ''),
+    'Accept': 'application/vnd.linkedin.normalized+json+2.1',
+    'Content-Type': 'application/json; charset=UTF-8'
+}
+```
+
+<Callout kind="note">
+  El header `csrf-token` debe contener el valor de `JSESSIONID` **sin** el prefijo `ajax:`.
+</Callout>
+
+## Ejemplo Completo con cURL
+
+```bash
+curl -X GET https://www.linkedin.com/voyager/api/me \\
+  -H "Cookie: li_at=AQEDATEwNjY0MDA...; JSESSIONID=ajax:1234567890" \\
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \\
+  -H "X-Li-User-Agent: LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881" \\
+  -H "csrf-token: 1234567890" \\
+  -H "Accept: application/vnd.linkedin.normalized+json+2.1"
+```
+
+## Ejemplo con Python (requests)
+
+```python
+import requests
+
+li_at = "AQEDATEwNjY0MDA..."
+jsessionid = "1234567890"
+
+headers = {
+    'Cookie': f'li_at={li_at}; JSESSIONID=ajax:{jsessionid}',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'X-Li-User-Agent': 'LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881',
+    'csrf-token': jsessionid,
+    'Accept': 'application/vnd.linkedin.normalized+json+2.1'
+}
+
+response = requests.get(
+    'https://www.linkedin.com/voyager/api/me',
+    headers=headers
+)
+
+print(response.json())
+```
+
+## Ejemplo con JavaScript (fetch)
+
+```javascript
+const li_at = "AQEDATEwNjY0MDA...";
+const jsessionid = "1234567890";
+
+const headers = {
+  'Cookie': `li_at=${li_at}; JSESSIONID=ajax:${jsessionid}`,
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+  'X-Li-User-Agent': 'LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881',
+  'csrf-token': jsessionid,
+  'Accept': 'application/vnd.linkedin.normalized+json+2.1'
+};
+
+fetch('https://www.linkedin.com/voyager/api/me', { headers })
+  .then(res => res.json())
+  .then(data => console.log(data));
+```
+
+## Usando Proxies
+
+Para evitar bloqueos, se recomienda usar proxies rotativos:
+
+```python
+proxies = {
+    'http': 'http://user:pass@proxy-server:8080',
+    'https': 'http://user:pass@proxy-server:8080'
+}
+
+response = requests.get(
+    'https://www.linkedin.com/voyager/api/me',
+    headers=headers,
+    proxies=proxies
+)
+```
+
+## Validar Autenticación
+
+Para verificar que tus cookies son válidas, haz una petición a `/me`:
+
+```bash
+curl -X GET https://www.linkedin.com/voyager/api/me \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID" \\
+  -H "User-Agent: Mozilla/5.0..."
+```
+
+### Respuesta Exitosa (200)
+
+```json
+{
+  "miniProfile": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "publicIdentifier": "john-doe"
+  }
+}
+```
+
+### Respuesta de Error (401)
+
+```json
+{
+  "status": 401,
+  "message": "Unauthorized"
+}
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Rotación de Cookies">
+    Rota las cookies regularmente (cada 1-7 días) para evitar que LinkedIn detecte patrones.
+  </Step>
+  
+  <Step title="Usar Proxies">
+    Usa proxies residenciales para distribuir las requests y evitar bloqueos por IP.
+  </Step>
+  
+  <Step title="Delays entre Requests">
+    Implementa delays de 3-5 segundos entre requests para simular comportamiento humano.
+  </Step>
+  
+  <Step title="Almacenamiento Seguro">
+    Nunca guardes las cookies en plaintext. Usa variables de entorno o servicios de secrets management.
+  </Step>
+</Steps>
+
+## Códigos de Error
+
+| Código | Descripción | Solución |
+|--------|-------------|----------|
+| 401 | Cookies inválidas o expiradas | Renovar cookies desde el navegador |
+| 403 | Request bloqueada por LinkedIn | Verificar headers y usar proxy |
+| 429 | Rate limit excedido | Reducir frecuencia de requests |
+
+<Callout kind="alert">
+  **Seguridad**: Las cookies `li_at` dan acceso completo a la cuenta de LinkedIn. Guárdalas de forma segura y nunca las compartas públicamente.
+</Callout>
+
+## Variables de Entorno
+
+Te recomendamos usar variables de entorno para las cookies:
+
+```bash
+export LINKEDIN_LI_AT="AQEDATEwNjY0MDA..."
+export LINKEDIN_JSESSIONID="1234567890"
+```
+
+```python
+import os
+
+li_at = os.getenv('LINKEDIN_LI_AT')
+jsessionid = os.getenv('LINKEDIN_JSESSIONID')
+```
+
+## Troubleshooting
+
+### Error: "CSRF token validation failed"
+
+Asegúrate de que el header `csrf-token` coincide con el valor de `JSESSIONID` (sin el prefijo `ajax:`):
+
+```python
+csrf_token = jsessionid.replace('ajax:', '')
+```
+
+### Error: "User-Agent not allowed"
+
+LinkedIn bloquea algunos User-Agents. Usa un User-Agent actualizado de un navegador real.
+
+### Error: "Too many requests"
+
+Implementa un sistema de rate limiting:
+
+```python
+import time
+
+time.sleep(3)  # 3 segundos entre requests
+```

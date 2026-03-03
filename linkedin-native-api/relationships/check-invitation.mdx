@@ -1,0 +1,39 @@
+---
+title: 'Check Invitation Status'
+description: 'Verificar el estado de una invitación específica'
+---
+
+# GET /voyagerRelationshipsDashInvitations/{invitationUrn}
+
+Verifica el estado actual de una invitación específica mediante su URN.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/voyagerRelationshipsDashInvitations/{invitationUrn}
+```
+
+## Path Parameters
+
+| Parámetro | Tipo | Requerido | Descripción |
+|-----------|------|-----------|-------------|
+| `invitationUrn` | string | Sí | URN de la invitación (urn:li:fsd_invitation:ID) |
+
+## Estados Posibles
+
+- `PENDING` - Invitación enviada, esperando respuesta
+- `ACCEPTED` - Invitación aceptada
+- `WITHDRAWN` - Invitación cancelada por el emisor
+- `IGNORED` - Invitación ignorada por el receptor
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/voyagerRelationshipsDashInvitations/urn:li:fsd_invitation:12345678" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID" \\
+  -H "csrf-token: YOUR_JSESSIONID"
+```
+
+## Código de Implementación
+
+Ver [app/services/check_invitation.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\check_invitation.py) línea 52.

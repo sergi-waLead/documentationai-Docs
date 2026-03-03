@@ -31,7 +31,7 @@ GET /api/py-linkedin/user-data
 <CodeGroup>
 
 ```bash cURL
-curl -X GET https://api.example.com/api/py-linkedin/user-data \\
+curl -X GET http://127.0.0.1:8000/api/py-linkedin/user-data \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -49,7 +49,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/user-data'
+url = 'http://127.0.0.1:8000/api/py-linkedin/user-data'
 headers = {
     'X-API-Key': 'your-jwt-token'
 }

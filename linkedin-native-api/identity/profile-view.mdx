@@ -1,0 +1,36 @@
+---
+title: 'Profile View'
+description: 'Visitar y obtener información completa de un perfil'
+---
+
+# GET /identity/profiles/{publicId}/profileView
+
+Obtiene la vista completa de un perfil de LinkedIn y registra una vista del perfil.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/identity/profiles/{publicId}/profileView
+```
+
+## Path Parameters
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `publicId` | string | Public identifier del perfil (ej: john-doe) |
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/identity/profiles/john-doe/profileView" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID" \\
+  -H "csrf-token: YOUR_JSESSIONID"
+```
+
+<Callout kind="alert">
+  Este endpoint registra una vista del perfil. Úsalo con moderación para evitar alertar al usuario y exceder rate limits de LinkedIn.
+</Callout>
+
+## Código de Implementación
+
+Ver [app/services/visit_profile.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\visit_profile.py) línea 86.

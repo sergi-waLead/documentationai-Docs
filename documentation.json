@@ -11,8 +11,120 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "LinkedIn API",
+        "tab": "LinkedIn Native API",
         "icon": "linkedin",
+        "groups": [
+          {
+            "group": "Overview",
+            "icon": "info",
+            "pages": [
+              {
+                "title": "Introduction",
+                "path": "linkedin-native-api/introduction",
+                "icon": "home"
+              },
+              {
+                "title": "Authentication",
+                "path": "linkedin-native-api/authentication",
+                "icon": "key"
+              }
+            ]
+          },
+          {
+            "group": "Relationships",
+            "icon": "user-plus",
+            "pages": [
+              {
+                "title": "Invitations Summary",
+                "path": "linkedin-native-api/relationships/invitations-summary"
+              },
+              {
+                "title": "Sent Invitations",
+                "path": "linkedin-native-api/relationships/sent-invitations"
+              },
+              {
+                "title": "Close Invitations",
+                "path": "linkedin-native-api/relationships/close-invitations"
+              },
+              {
+                "title": "Check Invitation",
+                "path": "linkedin-native-api/relationships/check-invitation"
+              },
+              {
+                "title": "Member Relationships",
+                "path": "linkedin-native-api/relationships/member-relationships"
+              }
+            ]
+          },
+          {
+            "group": "Messaging",
+            "icon": "message-circle",
+            "pages": [
+              {
+                "title": "Get Conversations",
+                "path": "linkedin-native-api/messaging/get-conversations"
+              },
+              {
+                "title": "Conversation Events",
+                "path": "linkedin-native-api/messaging/conversation-events"
+              },
+              {
+                "title": "Create Message",
+                "path": "linkedin-native-api/messaging/create-message"
+              },
+              {
+                "title": "Update Conversation",
+                "path": "linkedin-native-api/messaging/update-conversation"
+              }
+            ]
+          },
+          {
+            "group": "Identity & Profile",
+            "icon": "user",
+            "pages": [
+              {
+                "title": "Get Current User",
+                "path": "linkedin-native-api/identity/current-user"
+              },
+              {
+                "title": "Profile View",
+                "path": "linkedin-native-api/identity/profile-view"
+              },
+              {
+                "title": "GraphQL Profile",
+                "path": "linkedin-native-api/identity/graphql-profile"
+              }
+            ]
+          },
+          {
+            "group": "Search",
+            "icon": "search",
+            "pages": [
+              {
+                "title": "GraphQL Search",
+                "path": "linkedin-native-api/search/graphql-search"
+              }
+            ]
+          },
+          {
+            "group": "Network",
+            "icon": "users",
+            "pages": [
+              {
+                "title": "Get Connections",
+                "path": "linkedin-native-api/network/get-connections"
+              },
+              {
+                "title": "Connections Pagination",
+                "path": "linkedin-native-api/network/connections-pagination"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "LinkedIn API Wrapper",
+        "icon": "code",
         "groups": [
           {
             "group": "Overview",

@@ -38,7 +38,7 @@ POST /api/py-linkedin/visit-profile
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.example.com/api/py-linkedin/visit-profile?checkLimits=true \\
+curl -X POST http://127.0.0.1:8000/api/py-linkedin/visit-profile?checkLimits=true \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -64,7 +64,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/visit-profile'
+url = 'http://127.0.0.1:8000/api/py-linkedin/visit-profile'
 params = {'checkLimits': 'true'}
 headers = {
     'X-API-Key': 'your-jwt-token',

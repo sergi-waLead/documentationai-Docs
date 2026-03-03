@@ -1,0 +1,54 @@
+---
+title: 'GraphQL Search'
+description: 'Buscar personas en LinkedIn usando GraphQL'
+---
+
+# GET /graphql?variables=(start:0,origin:FACETED_SEARCH,...)&queryId=...
+
+Realiza búsquedas de personas en LinkedIn con filtros avanzados usando GraphQL.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/graphql
+```
+
+## Query ID
+
+```
+voyagerSearchDashClusters.52fec77d08aa4598c8a056ca6bce6c11
+```
+
+## Variables de Búsqueda
+
+```
+variables=(
+  start:0,
+  origin:FACETED_SEARCH,
+  query:(
+    keywords:YOUR_KEYWORDS,
+    flagshipSearchIntent:SEARCH_SRP,
+    queryParameters:YOUR_FILTERS,
+    includeFiltersInResponse:false
+  )
+)
+```
+
+## Filtros Disponibles
+
+- `currentCompany` - Empresa actual
+- `geoUrn` - Ubicación geográfica
+- `industry` - Industria
+- `school` - Universidad/Escuela
+- `connectionOf` - Conexiones de (URN)
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/graphql?variables=(start:0,origin:FACETED_SEARCH,query:(keywords:engineer,flagshipSearchIntent:SEARCH_SRP))&queryId=voyagerSearchDashClusters.52fec77d08aa4598c8a056ca6bce6c11" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID"
+```
+
+## Código de Implementación
+
+Ver [app/services/search_people.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\search_people.py) línea 282.

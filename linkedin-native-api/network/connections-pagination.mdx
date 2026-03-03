@@ -1,0 +1,35 @@
+---
+title: 'Connections Pagination'
+description: 'Paginación optimizada de conexiones usando SDUI'
+---
+
+# GET /flagship-web/rsc-action/actions/pagination
+
+Método alternativo para paginar conexiones usando el sistema SDUI (Server-Driven UI) de LinkedIn.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/flagship-web/rsc-action/actions/pagination
+```
+
+## Query Parameters
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `sduiid` | string | `com.linkedin.sdui.pagers.mynetwork.connectionsList` |
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/flagship-web/rsc-action/actions/pagination?sduiid=com.linkedin.sdui.pagers.mynetwork.connectionsList" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID"
+```
+
+<Callout kind="note">
+  Este endpoint usa la arquitectura SDUI de LinkedIn y puede devolver resultados en un formato diferente al endpoint tradicional de conexiones.
+</Callout>
+
+## Código de Implementación
+
+Ver [app/services/recent_connections.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\recent_connections.py) línea 117.

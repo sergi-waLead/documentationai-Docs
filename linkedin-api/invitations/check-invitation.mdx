@@ -32,7 +32,7 @@ POST /api/py-linkedin/check-invitation
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.example.com/api/py-linkedin/check-invitation \\
+curl -X POST http://127.0.0.1:8000/api/py-linkedin/check-invitation \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -58,7 +58,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/check-invitation'
+url = 'http://127.0.0.1:8000/api/py-linkedin/check-invitation'
 headers = {
     'X-API-Key': 'your-jwt-token',
     'Content-Type': 'application/json'

@@ -1,0 +1,157 @@
+---
+title: 'LinkedIn Native API'
+description: 'Documentación de los endpoints nativos de LinkedIn consumidos directamente'
+---
+
+# LinkedIn Native API
+
+Esta sección documenta los **endpoints nativos de LinkedIn** que tu aplicación consume directamente. Estos son los endpoints oficiales de LinkedIn que se utilizan internamente en tu wrapper.
+
+## Base URL
+
+```
+https://www.linkedin.com/voyager/api
+```
+
+<Callout kind="alert">
+  Algunos endpoints usan la ruta base `/voyager/api` mientras que otros usan rutas directas como `/messaging` o `/relationships`. Verifica cada endpoint para la ruta correcta.
+</Callout>
+
+## Características
+
+<CardGroup cols={2}>
+  <Card title="Autenticación por Cookies" icon="cookie">
+    Los endpoints nativos de LinkedIn requieren cookies de sesión (`li_at`, `JSESSIONID`) en lugar de tokens JWT.
+  </Card>
+  
+  <Card title="GraphQL Support" icon="diagram-project">
+    LinkedIn usa GraphQL para consultas complejas de perfiles, búsquedas y datos de red.
+  </Card>
+  
+  <Card title="Rate Limiting Estricto" icon="gauge-high">
+    LinkedIn aplica límites de tasa muy estrictos. Exceder estos límites puede resultar en bloqueos temporales o permanentes.
+  </Card>
+  
+  <Card title="Headers Personalizados" icon="header">
+    Requiere headers específicos como `X-Li-User-Agent` y `csrf-token` para evitar detección automatizada.
+  </Card>
+</CardGroup>
+
+## Estructura de Respuesta
+
+LinkedIn usa diferentes formatos de respuesta dependiendo del endpoint:
+
+### REST API Response
+```json
+{
+  "data": {
+    "value": {
+      // Datos del recurso
+    }
+  },
+  "included": []
+}
+```
+
+### GraphQL Response
+```json
+{
+  "data": {
+    // Datos de la consulta
+  },
+  "included": []
+}
+```
+
+## Headers Requeridos
+
+Todos los endpoints nativos de LinkedIn requieren estos headers:
+
+| Header | Valor | Descripción |
+|--------|-------|-------------|
+| `Cookie` | `li_at={token}; JSESSIONID=ajax:{session}` | Cookies de autenticación |
+| `User-Agent` | Mozilla/5.0... | User agent del navegador |
+| `X-Li-User-Agent` | LIAuthLibrary:0.0.3... | User agent de LinkedIn mobile |
+| `csrf-token` | Valor del token CSRF | Token de protección CSRF |
+
+## Rate Limits
+
+<Callout kind="alert">
+  LinkedIn monitorea activamente el comportamiento automatizado. Recomendaciones:
+  - Max 10-20 requests por minuto
+  - Implementar delays entre requests (3-5 segundos)
+  - Rotar IPs si es posible (proxies)
+  - Evitar patrones repetitivos
+</Callout>
+
+## Categorías de Endpoints
+
+### Relationships
+Gestión de invitaciones y conexiones:
+- Resumen de invitaciones enviadas
+- Listar invitaciones pendientes
+- Cerrar/eliminar invitaciones
+- Verificar estado de invitaciones
+- Enviar invitaciones de conexión
+
+### Messaging
+Gestión de conversaciones y mensajes:
+- Obtener lista de conversaciones
+- Obtener eventos de una conversación (mensajes)
+- Crear mensajes nuevos
+- Marcar conversaciones como leídas
+
+### Identity & Profile
+Información de perfiles:
+- Datos del usuario actual (`/me`)
+- Vista de perfil de otros usuarios
+- Consultas GraphQL de perfiles
+
+### Search
+Búsqueda de personas y empresas:
+- Búsqueda GraphQL con filtros avanzados
+- Búsqueda en Sales Navigator
+
+### Network
+Gestión de red de conexiones:
+- Obtener conexiones recientes
+- Paginación de lista de conexiones
+
+## Códigos de Error Comunes
+
+| Código | Descripción | Solución |
+|--------|-------------|----------|
+| 401 | No autorizado | Verificar cookies `li_at` y `JSESSIONID` |
+| 403 | Prohibido | Revisar headers CSRF y User-Agent |
+| 429 | Rate limit excedido | Reducir frecuencia de requests |
+| 500 | Error del servidor | Reintentar después de un delay |
+
+<Callout kind="note">
+  Estos endpoints son **no oficiales** y LinkedIn puede cambiarlos sin previo aviso. Usa con precaución y siempre respeta los términos de servicio de LinkedIn.
+</Callout>
+
+## Seguridad
+
+<Callout kind="alert">
+  **Importante**: Las cookies `li_at` y `JSESSIONID` son credenciales sensibles que dan acceso completo a la cuenta de LinkedIn. Nunca las compartas públicamente y rotarlas regularmente.
+</Callout>
+
+## Próximos Pasos
+
+<CardGroup cols={2}>
+  <Card title="Autenticación" icon="key" href="./authentication">
+    Aprende cómo configurar las cookies y headers necesarios
+  </Card>
+  
+  <Card title="Relationships" icon="user-plus" href="./relationships/invitations-summary">
+    Explora los endpoints de gestión de invitaciones
+  </Card>
+  
+  <Card title="Messaging" icon="message-circle" href="./messaging/get-conversations">
+    Descubre cómo trabajar con mensajes
+  </Card>
+  
+  <Card title="Search" icon="search" href="./search/graphql-search">
+    Usa los endpoints de búsqueda GraphQL
+  </Card>
+</CardGroup>

@@ -1,0 +1,30 @@
+---
+title: 'Update Conversation'
+description: 'Marcar una conversación como leída o no leída'
+---
+
+# PUT /messaging/conversations/{conversationUrn}
+
+Actualiza el estado de una conversación (principalmente para marcarla como leída).
+
+## Endpoint
+
+```
+PUT https://www.linkedin.com/voyager/api/messaging/conversations/{conversationUrnId}
+```
+
+## Request Body
+
+```json
+{
+  "patch": {
+    "$set": {
+      "read": true
+    }
+  }
+}
+```
+
+## Código de Implementación
+
+Ver [app/services/mark_conversation_read.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\mark_conversation_read.py) línea 111.

@@ -1,0 +1,35 @@
+---
+title: 'Member Relationships'
+description: 'Enviar invitación de conexión a un miembro'
+---
+
+# POST /voyagerRelationshipsDashMemberRelationships
+
+Envía una invitación de conexión a un miembro de LinkedIn.
+
+## Endpoint
+
+```
+POST https://www.linkedin.com/voyager/api/voyagerRelationshipsDashMemberRelationships
+```
+
+## Request Body
+
+```json
+{
+  "invitee": {
+    "inviteeProfileUrn": "urn:li:fsd_profile:ACoAAA..."
+  },
+  "message": "Hi! Let's connect",
+  "customMessage": true
+}
+```
+
+## Límites
+
+- Mensaje máximo: 300 caracteres
+- Rate limit: ~10-20 invitaciones por hora
+
+## Código de Implementación
+
+Ver [app/services/invitation.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\invitation.py) línea 428.

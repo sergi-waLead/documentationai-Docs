@@ -1,0 +1,33 @@
+---
+title: 'Get Connections'
+description: 'Obtener lista de conexiones (1st degree connections)'
+---
+
+# GET /flagship-web/mynetwork/invite-connect/connections
+
+Obtiene la lista de conexiones de primer grado del usuario actual.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/flagship-web/mynetwork/invite-connect/connections
+```
+
+## Query Parameters
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `start` | integer | Índice inicial (default: 0) |
+| `count` | integer | Número de resultados (default: 20) |
+| `sortType` | string | Ordenamiento: `RECENTLY_ADDED`, `FIRST_NAME`, `LAST_NAME` |
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/flagship-web/mynetwork/invite-connect/connections?start=0&count=20&sortType=RECENTLY_ADDED" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID"
+```
+
+## Código de Implementación
+
+Ver [app/services/recent_connections.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\recent_connections.py) línea 198.

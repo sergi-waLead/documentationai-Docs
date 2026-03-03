@@ -1,0 +1,232 @@
+---
+title: 'Get Current User'
+description: 'Obtener información del usuario actualmente autenticado'
+---
+
+# GET /me
+
+Obtiene la información del perfil del usuario actualmente autenticado (tu cuenta de LinkedIn).
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/me
+```
+
+## Headers
+
+```
+Cookie: li_at={token}; JSESSIONID=ajax:{session}
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+X-Li-User-Agent: LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881
+csrf-token: {session}
+```
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://www.linkedin.com/voyager/api/me \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID" \\
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \\
+  -H "X-Li-User-Agent: LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881" \\
+  -H "csrf-token: YOUR_JSESSIONID"
+```
+
+```python Python
+import requests
+
+li_at = "YOUR_LI_AT"
+jsessionid = "YOUR_JSESSIONID"
+
+headers = {
+    'Cookie': f'li_at={li_at}; JSESSIONID=ajax:{jsessionid}',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'X-Li-User-Agent': 'LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881',
+    'csrf-token': jsessionid
+}
+
+response = requests.get(
+    'https://www.linkedin.com/voyager/api/me',
+    headers=headers
+)
+
+data = response.json()
+print(f"User: {data['miniProfile']['firstName']} {data['miniProfile']['lastName']}")
+print(f"Profile: https://www.linkedin.com/in/{data['miniProfile']['publicIdentifier']}")
+```
+
+```javascript JavaScript
+const li_at = 'YOUR_LI_AT';
+const jsessionid = 'YOUR_JSESSIONID';
+
+const headers = {
+  'Cookie': `li_at=${li_at}; JSESSIONID=ajax:${jsessionid}`,
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+  'X-Li-User-Agent': 'LIAuthLibrary:0.0.3 com.linkedin.android:4.1.881',
+  'csrf-token': jsessionid
+};
+
+const response = await fetch(
+  'https://www.linkedin.com/voyager/api/me',
+  { headers }
+);
+
+const data = await response.json();
+console.log(`User: ${data.miniProfile.firstName} ${data.miniProfile.lastName}`);
+console.log(`Profile: https://www.linkedin.com/in/${data.miniProfile.publicIdentifier}`);
+```
+
+</CodeGroup>
+
+## Respuesta Exitosa
+
+```json
+{
+  "miniProfile": {
+    "*miniProfileUrn": "urn:li:fs_miniProfile:ACoAABcd1234EFghijk",
+    "firstName": "John",
+    "lastName": "Doe",
+    "dashEntityUrn": "urn:li:fsd_profile:ACoAABcd1234EFghijk",
+    "occupation": "Software Engineer at Tech Corp",
+    "objectUrn": "urn:li:member:123456789",
+    "entityUrn": "urn:li:fs_miniProfile:ACoAABcd1234EFghijk",
+    "publicIdentifier": "john-doe",
+    "picture": {
+      "com.linkedin.common.VectorImage": {
+        "artifacts": [
+          {
+            "width": 100,
+            "fileIdentifyingUrlPathSegment": "profile-displayphoto.../photo.jpg",
+            "expiresAt": 1710000000000,
+            "height": 100
+          },
+          {
+            "width": 200,
+            "fileIdentifyingUrlPathSegment": "profile-displayphoto.../photo.jpg",
+            "expiresAt": 1710000000000,
+            "height": 200
+          }
+        ],
+        "rootUrl": "https://media.licdn.com/dms/image/"
+      }
+    },
+    "trackingId": "abc123def456"
+  },
+  "plainId": 123456789,
+  "$type": "com.linkedin.voyager.identity.me.MemberProfileIdentity"
+}
+```
+
+### Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `miniProfile.firstName` | string | Nombre del usuario |
+| `miniProfile.lastName` | string | Apellido del usuario |
+| `miniProfile.publicIdentifier` | string | ID público del perfil (URL slug) |
+| `miniProfile.occupation` | string | Título profesional actual |
+| `miniProfile.entityUrn` | string | URN del perfil |
+| `miniProfile.objectUrn` | string | URN del miembro |
+| `miniProfile.picture` | object | Información de la foto de perfil |
+| `plainId` | integer | ID numérico del miembro |
+
+## Uso del Public Identifier
+
+El `publicIdentifier` es el slug de la URL de tu perfil:
+
+```
+https://www.linkedin.com/in/{publicIdentifier}
+```
+
+Por ejemplo: `https://www.linkedin.com/in/john-doe`
+
+## Foto de Perfil
+
+Para obtener la URL completa de la foto de perfil:
+
+```python
+picture_data = data['miniProfile']['picture']['com.linkedin.common.VectorImage']
+root_url = picture_data['rootUrl']
+path = picture_data['artifacts'][1]['fileIdentifyingUrlPathSegment']
+profile_pic_url = f"{root_url}{path}"
+```
+
+<Callout kind="tip">
+  Usa el artifact con mayor resolución (width: 200 o más) para mejor calidad de imagen.
+</Callout>
+
+## Casos de Uso
+
+Este endpoint es útil para:
+
+- **Validar autenticación**: Verificar que las cookies son válidas
+- **Obtener datos básicos**: Nombre, apellido, public identifier
+- **Caching**: Guardar información del usuario para evitar llamadas repetidas
+- **Identificación**: Obtener el URN del usuario actual para otros endpoints
+
+<Callout kind="info">
+  Este endpoint es muy útil como "health check" para verificar que tu sesión de LinkedIn está activa.
+</Callout>
+
+## Caching
+
+El cliente de linkedin_api cachea automáticamente esta respuesta:
+
+```python
+# Primera llamada: hace request a LinkedIn
+user_profile = _get_user_profile(api, use_cache=True)
+
+# Segunda llamada: usa cache
+user_profile = _get_user_profile(api, use_cache=True)
+
+# Forzar nuevo request
+user_profile = _get_user_profile(api, use_cache=False)
+```
+
+## Rate Limits
+
+- **Frecuencia recomendada**: 1-2 veces por sesión
+- **Cache recomendado**: Sí, cachear por al menos 1 hora
+
+<Callout kind="tip">
+  Este endpoint tiene un rate limit bajo. Úsalo solo al inicio de la sesión y cachea el resultado.
+</Callout>
+
+## Errores Comunes
+
+| Código | Descripción | Solución |
+|--------|-------------|----------|
+| 401 | No autorizado | Cookies inválidas o expiradas |
+| 403 | Prohibido | Headers incorrectos |
+| 429 | Rate limit excedido | Cachear resultado |
+
+## Código de Implementación
+
+```python
+# app/services/user_data.py (línea 100)
+def _get_user_profile(self, use_cache=True):
+    me_profile = self.client.metadata.get("me", {})
+    uri = "/me"
+    if not self.client.metadata.get("me") or not use_cache:
+        res = safe_request(api=self, uri=uri, method="GET", debug=True)
+        if "error" in res:
+            return {}
+        me_profile = res
+        # cache profile
+        self.client.metadata["me"] = me_profile
+    return me_profile
+```
+
+## Obtener Información Adicional
+
+Para obtener más detalles del perfil (followers, connections, etc.), combina con:
+
+- [GraphQL Profile](./graphql-profile) - Datos completos del perfil
+- [Profile View](./profile-view) - Vista de perfil completa
+
+## Relacionados
+
+- [GraphQL Profile](./graphql-profile) - Obtener followers y connections
+- [Authentication](../authentication) - Cómo configurar las cookies necesarias

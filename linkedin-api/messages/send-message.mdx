@@ -47,7 +47,7 @@ POST /api/py-linkedin/send-message
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.example.com/api/py-linkedin/send-message \\
+curl -X POST http://127.0.0.1:8000/api/py-linkedin/send-message \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -75,7 +75,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/send-message'
+url = 'http://127.0.0.1:8000/api/py-linkedin/send-message'
 headers = {
     'X-API-Key': 'your-jwt-token',
     'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ data = response.json()
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.example.com/api/py-linkedin/send-message \\
+curl -X POST http://127.0.0.1:8000/api/py-linkedin/send-message \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -124,7 +124,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/send-message'
+url = 'http://127.0.0.1:8000/api/py-linkedin/send-message'
 headers = {
     'X-API-Key': 'your-jwt-token',
     'Content-Type': 'application/json'

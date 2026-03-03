@@ -25,7 +25,7 @@ GET /api/py-linkedin/count-pending-invitations
 <CodeGroup>
 
 ```bash cURL
-curl -X GET https://api.example.com/api/py-linkedin/count-pending-invitations \\
+curl -X GET http://127.0.0.1:8000/api/py-linkedin/count-pending-invitations \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -43,7 +43,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/count-pending-invitations'
+url = 'http://127.0.0.1:8000/api/py-linkedin/count-pending-invitations'
 headers = {
     'X-API-Key': 'your-jwt-token'
 }

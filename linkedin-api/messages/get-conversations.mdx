@@ -35,11 +35,11 @@ GET /api/py-linkedin/conversations
 
 ```bash cURL
 # Conversaciones no leídas
-curl -X GET "https://api.example.com/api/py-linkedin/conversations?read=false&count=20" \\
+curl -X GET "http://127.0.0.1:8000/api/py-linkedin/conversations?read=false&count=20" \\
   -H "X-API-Key: eyJhbGciOi JIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
 # Conversaciones leídas con paginación
-curl -X GET "https://api.example.com/api/py-linkedin/conversations?read=true&cursor=abc123&count=20" \\
+curl -X GET "http://127.0.0.1:8000/api/py-linkedin/conversations?read=true&cursor=abc123&count=20" \\
   -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -66,7 +66,7 @@ const nextPage = await fetch(`/api/py-linkedin/conversations?read=false&cursor=$
 ```python Python
 import requests
 
-url = 'https://api.example.com/api/py-linkedin/conversations'
+url = 'http://127.0.0.1:8000/api/py-linkedin/conversations'
 params = {
     'read': False,
     'count': 20

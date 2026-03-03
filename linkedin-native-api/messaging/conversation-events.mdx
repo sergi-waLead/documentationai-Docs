@@ -1,0 +1,31 @@
+---
+title: 'Conversation Events'
+description: 'Obtener mensajes de una conversación específica'
+---
+
+# GET /messaging/conversations/{conversationUrn}/events
+
+Obtiene todos los mensajes (eventos) de una conversación específica.
+
+## Endpoint
+
+```
+GET https://www.linkedin.com/voyager/api/messaging/conversations/{conversationUrnId}/events
+```
+
+## Path Parameters
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `conversationUrnId` | string | ID de la conversación (sin el prefijo urn:li:msg_conversation:) |
+
+## Ejemplo
+
+```bash
+curl -X GET "https://www.linkedin.com/voyager/api/messaging/conversations/2-ABC123/events" \\
+  -H "Cookie: li_at=YOUR_LI_AT; JSESSIONID=ajax:YOUR_JSESSIONID"
+```
+
+## Código de Implementación
+
+Ver [app/services/conversations.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\conversations.py) línea 353.

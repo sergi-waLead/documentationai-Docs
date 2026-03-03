@@ -1,0 +1,38 @@
+---
+title: 'Create Message'
+description: 'Enviar un nuevo mensaje en una conversación'
+---
+
+# POST /voyager/api/voyagerMessagingDashMessengerMessages?action=createMessage
+
+Envía un nuevo mensaje en una conversación existente.
+
+## Endpoint
+
+```
+POST https://www.linkedin.com/voyager/api/voyager/api/voyagerMessagingDashMessengerMessages?action=createMessage
+```
+
+## Request Body
+
+```json
+{
+  "message": {
+    "body": {
+      "text": "Hello! This is my message"
+    },
+    "conversationUrn": "urn:li:msg_conversation:(urn:li:fsd_profile:...,2-ABC123)"
+  },
+  "mailboxUrn": "urn:li:fsd_profile:ACoAAA...",
+  "dedupeByClientGeneratedToken": false
+}
+```
+
+## Límites
+
+- Max 50 mensajes por día a nuevas conexiones
+- Max 150 caracteres para primer mensaje sin conexión
+
+## Código de Implementación
+
+Ver [app/services/send_message.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\send_message.py) línea 318.

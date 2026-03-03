@@ -1,0 +1,33 @@
+---
+title: 'Get Conversations'
+description: 'Obtener lista de conversaciones de mensajes'
+---
+
+# POST /voyagerMessagingGraphQL/graphql
+
+Obtiene la lista de conversaciones de mensajes usando GraphQL.
+
+## Endpoint
+
+```
+POST https://www.linkedin.com/voyager/api/voyagerMessagingGraphQL/graphql
+```
+
+## Query ID
+
+```
+voyagerMessagingDashConversationsByCriteria.123abc
+```
+
+## Variables
+
+```json
+{
+  "mailboxUrn": "urn:li:fsd_profile:ACoAAA...",
+  "count": 20
+}
+```
+
+## Código de Implementación
+
+Ver [app/services/conversations.py](c:\\Users\\PC\\Documents\\WaLead\\py-linkedin-api\\app\\services\\conversations.py) línea 272.
