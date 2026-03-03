@@ -28,9 +28,9 @@ POST /api/py-linkedin/check-connection
 | `publicId` | string | No* | ID público del perfil (ej: `john-doe`) |
 | `entityUrn` | string | No* | URN del perfil (ej: `ACoAAA...`) |
 
-<Note>
+<Callout kind="note">
   *Al menos uno de `publicId` o `entityUrn` es requerido.
-</Note>
+</Callout>
 
 ## Ejemplo de Request
 
@@ -206,20 +206,20 @@ async function filterUnconnectedProfiles(profiles) {
 - `GET /recent-connections` - Ver conexiones recientes
 - `POST /send-message` - Enviar mensaje (solo a conectados)
 
-<Tip>
+<Callout kind="tip">
   Usa este endpoint antes de enviar invitaciones masivas para filtrar perfiles
   ya conectados y ahorrar cuota de invitaciones.
-</Tip>
+</Callout>
 
-<Info>
+<Callout kind="info">
   Este endpoint solo verifica conexiones de **primer grado** (directas).
   No detecta conexiones de 2do o 3er grado.
-</Info>
+</Callout>
 
-<Warning>
+<Callout kind="alert">
   Aunque este endpoint no consume muchos recursos, evita hacer verificaciones
   excesivas en poco tiempo para mantener un comportamiento natural.
-</Warning>
+</Callout>
 
 ## Buenas Prácticas
 

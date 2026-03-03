@@ -87,9 +87,9 @@ data = response.json()
 
 ## Campos de Respuesta
 
-<Note>
+<Callout kind="note">
   Los campos devueltos pueden variar según la información disponible en el perfil.
-</Note>
+</Callout>
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
@@ -156,15 +156,15 @@ async function initializeUser() {
 - `GET /recent-connections` - Obtener conexiones recientes
 - `POST /check-connection` - Verificar conexión con otros perfiles
 
-<Tip>
+<Callout kind="tip">
   Usa este endpoint al inicio de la sesión para verificar que el token es válido
   y obtener información básica del usuario autenticado.
-</Tip>
+</Callout>
 
-<Info>
+<Callout kind="info">
   Este endpoint devuelve información del perfil **propio**, no de otros usuarios.
   Para obtener datos de otros perfiles, usa endpoints de búsqueda o visita de perfiles.
-</Info>
+</Callout>
 
 ## Notas Importantes
 
@@ -175,10 +175,10 @@ async function initializeUser() {
 
 ## Privacy y Seguridad
 
-<Warning>
+<Callout kind="alert">
   Los datos del usuario deben manejarse según las regulaciones de privacidad (GDPR, CCPA, etc.).
   No almacenes información sensible innecesariamente.
-</Warning>
+</Callout>
 
 - Almacena solo los datos necesarios
 - Implementa cifrado para datos sensibles

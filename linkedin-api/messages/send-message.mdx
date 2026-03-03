@@ -36,9 +36,9 @@ POST /api/py-linkedin/send-message
 | `conversationUrn` | string | No* | URN de la conversación existente |
 | `mailboxUrn` | string | No | URN del buzón (opcional) |
 
-<Note>
+<Callout kind="note">
   *Debes proporcionar `entityUrn` (para nueva conversación) o `conversationUrn` (para conversación existente).
-</Note>
+</Callout>
 
 ## Ejemplo de Request
 
@@ -202,15 +202,15 @@ data = response.json()
 
 ## Restricciones de LinkedIn
 
-<Warning>
+<Callout kind="alert">
   Solo puedes enviar mensajes a perfiles con los que estés conectado (1er grado).
   Los mensajes a perfiles no conectados serán rechazados.
-</Warning>
+</Callout>
 
-<Info>
+<Callout kind="info">
   LinkedIn tiene límites en el número de mensajes que puedes enviar por día.
   Usa `checkLimits=true` para monitorear tu uso.
-</Info>
+</Callout>
 
 ## Buenas Prácticas
 
@@ -226,7 +226,7 @@ data = response.json()
 - Automatizar campañas de outreach personalizadas
 - Gestionar comunicaciones con leads
 
-<Tip>
+<Callout kind="tip">
   Cuando inicies una nueva conversación, guarda el `conversationUrn` devuelto
   para usar en mensajes futuros de la misma conversación.
-</Tip>
+</Callout>

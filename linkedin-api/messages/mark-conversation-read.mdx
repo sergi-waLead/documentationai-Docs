@@ -164,21 +164,21 @@ for (const conv of conversations) {
 - `GET /recent-conversations` - Obtener conversaciones recientes
 - `POST /send-message` - Enviar mensaje en una conversación
 
-<Info>
+<Callout kind="info">
   Marcar una conversación como leída restablece el contador `unreadCount` a 0.
-</Info>
+</Callout>
 
-<Tip>
+<Callout kind="tip">
   Combina este endpoint con `/conversations?read=false` para crear un sistema
   automatizado de gestión de mensajes.
-</Tip>
+</Callout>
 
 ## Notas Importantes
 
-<Warning>
+<Callout kind="alert">
   Asegúrate de usar el `conversationUrn` completo tal como lo devuelven los
   endpoints `/conversations` o `/send-message`.
-</Warning>
+</Callout>
 
 - El URN de la conversación debe incluir el prefijo correcto del formato de LinkedIn
 - No se requiere autenticación adicional más allá del token JWT

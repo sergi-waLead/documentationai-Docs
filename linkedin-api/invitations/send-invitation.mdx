@@ -36,9 +36,9 @@ POST /api/py-linkedin/invitation
 | `message` | string | No | Mensaje personalizado de la invitación (máx. 300 caracteres) |
 | `forceExtractProfileUrn` | boolean | No | Fuerza la extracción del URN del perfil |
 
-<Note>
+<Callout kind="note">
   *Al menos uno de `publicId` o `entityUrn` es requerido.
-</Note>
+</Callout>
 
 ## Ejemplo de Request
 
@@ -151,19 +151,19 @@ data = response.json()
 
 ## Notas Importantes
 
-<Warning>
+<Callout kind="alert">
   LinkedIn limita el número de invitaciones que puedes enviar por período de tiempo.
   Usa `checkLimits=true` para evitar exceder estos límites.
-</Warning>
+</Callout>
 
-<Tip>
+<Callout kind="tip">
   Los mensajes personalizados aumentan la tasa de aceptación de invitaciones, pero
   no son obligatorios.
-</Tip>
+</Callout>
 
-<Info>
+<Callout kind="info">
   Si proporcionas ambos `publicId` y `entityUrn`, se usará el `entityUrn` preferentemente.
-</Info>
+</Callout>
 
 ## Control de Límites
 

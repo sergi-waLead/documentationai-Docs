@@ -46,10 +46,10 @@ El token se firma con la clave secreta configurada en las variables de entorno:
 JWT_LINKEDIN_AGENT_SECRET=linkedinAgentSecretKey
 ```
 
-<Warning>
+<Callout kind="alert">
   Nunca expongas la clave secreta en el código cliente. Esta debe mantenerse
   únicamente en el servidor.
-</Warning>
+</Callout>
 
 ## Ejemplo de Petición
 
@@ -129,10 +129,10 @@ o
 }
 ```
 
-<Note>
+<Callout kind="note">
   Los errores de autenticación devuelven un formato diferente al estándar de la API,
   ya que son manejados por el middleware de FastAPI antes de llegar a los endpoints.
-</Note>
+</Callout>
 
 ## Renovación del Token
 
@@ -159,9 +159,9 @@ CONTROL_API_KEY_V2=control-api-key
 CRYPTO_SECRET_KEY=your-crypto-key-here
 ```
 
-<Tip>
+<Callout kind="tip">
   Para generar una clave secreta segura, puedes usar:
   ```bash
   openssl rand -base64 32
   ```
-</Tip>
+</Callout>
