@@ -6,7 +6,7 @@ api: 'GET /api/py-linkedin/recent-connections'
 
 # Conexiones Recientes
 
-Obtiene una lista de tus conexiones recientes en LinkedIn, con opciones de filtrado y paginación.
+Obtiene una lista de las conexiones recientes en LinkedIn, con opciones de filtrado y paginación.
 
 ## Endpoint
 
@@ -194,12 +194,12 @@ const response = await fetch(
 
 ## Casos de Uso
 
-- **Análisis de red**: Estudiar tus conexiones recientes
+- **Análisis de red**: Estudiar las conexiones recientes
 - **Seguimiento**: Hacer follow-up con nuevas conexiones
 - **Segmentación**: Clasificar conexiones por características
 - **Exportación**: Sincronizar conexiones con CRM
-- **Mensajería**: Enviar mensajes a nuevas conexiones
-- **Analytics**: Analizar crecimiento de tu red
+- **Mensaje**: Enviar mensajes a nuevas conexiones
+- **Analytics**: Analizar crecimiento de la red
 
 ## Ejemplo de Integración
 
@@ -289,12 +289,12 @@ async function exportConnectionsToCSV() {
 - `POST /invitation` - Enviar nueva invitación
 
 <Callout kind="tip">
-  Procesa conexiones recientes regularmente para mantener el engagement con tu red.
+  Procesa conexiones recientes regularmente para mantener el engagement con la red.
   Envía mensajes de seguimiento dentro de las primeras 48 horas de conectar.
 </Callout>
 
 <Callout kind="alert">
-  No envíes mensajes masivos idénticos a todas tus conexiones. LinkedIn puede
+  No envíes mensajes masivos idénticos a todas las conexiones. LinkedIn puede
   detectar y penalizar este comportamiento.
 </Callout>
 
@@ -303,6 +303,6 @@ async function exportConnectionsToCSV() {
 1. **Follow-up oportuno**: Contacta nuevas conexiones dentro de 24-48h
 2. **Personalización**: Personaliza mensajes según el perfil
 3. **Segmentación**: Agrupa conexiones por industria/intereses
-4. **Sincronización con CRM**: Exporta y actualiza tu CRM regularmente
-5. **Análisis de crecimiento**: Monitorea el crecimiento de tu red
+4. **Sincronización con CRM**: Exporta y actualiza el CRM regularmente
+5. **Análisis de crecimiento**: Monitorea el crecimiento de la red
 6. **Rate limiting**: No hagas requests excesivos en poco tiempo

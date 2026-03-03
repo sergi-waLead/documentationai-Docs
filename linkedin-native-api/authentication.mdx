@@ -20,7 +20,7 @@ Para autenticarte en los endpoints nativos de LinkedIn, necesitas estas cookies:
 
 ### Opción 1: Desde el Navegador (Manual)
 
-1. Inicia sesión en [LinkedIn](https://www.linkedin.com) en tu navegador
+1. Inicia sesión en [LinkedIn](https://www.linkedin.com) en el navegador
 2. Abre las **DevTools** (F12)
 3. Ve a la pestaña **Application** > **Cookies** > `https://www.linkedin.com`
 4. Copia los valores de `li_at` y `JSESSIONID`
@@ -138,7 +138,7 @@ response = requests.get(
 
 ## Validar Autenticación
 
-Para verificar que tus cookies son válidas, haz una petición a `/me`:
+Para verificar que las cookies son válidas, haz una petición a `/me`:
 
 ```bash
 curl -X GET https://www.linkedin.com/voyager/api/me \\
