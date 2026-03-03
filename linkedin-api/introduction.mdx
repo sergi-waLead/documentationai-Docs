@@ -1,0 +1,126 @@
+---
+title: 'LinkedIn API - Introducción'
+description: 'API privada para interactuar con LinkedIn de forma automatizada'
+icon: 'linkedin'
+---
+
+# LinkedIn API
+
+API privada diseñada para automatizar interacciones con LinkedIn, incluyendo gestión de invitaciones, mensajes, búsquedas y análisis de perfiles.
+
+## Base URL
+
+```
+/api/py-linkedin
+```
+
+## Características principales
+
+<Columns cols={2}>
+  <Card title="Gestión de Invitaciones" icon="user-plus">
+    Envía, verifica y gestiona invitaciones de conexión en LinkedIn
+  </Card>
+  
+  <Card title="Mensajería" icon="message">
+    Envía mensajes, gestiona conversaciones y marca como leídas
+  </Card>
+  
+  <Card title="Búsqueda Avanzada" icon="magnifying-glass">
+    Busca perfiles con filtros avanzados y Sales Navigator
+  </Card>
+  
+  <Card title="Gestión de Perfil" icon="user">
+    Visita perfiles, obtén datos de usuario y gestiona conexiones
+  </Card>
+</Columns>
+
+## Estructura de Respuesta
+
+Todas las respuestas de la API siguen un formato estándar:
+
+```json
+{
+  "success": true,
+  "response": {
+    // Datos de la respuesta específicos del endpoint
+  },
+  "error": null
+}
+```
+
+### Respuesta de Error
+
+```json
+{
+  "success": false,
+  "response": null,
+  "error": {
+    "code": "ERROR_CODE",
+    "description": "Descripción del error",
+    "data": {
+      // Datos adicionales del error
+    }
+  }
+}
+```
+
+## Códigos de Error Comunes
+
+| Código | Descripción |
+|--------|-------------|
+| `RATE_LIMIT` | Límite de uso excedido |
+| `UNAUTHORIZED` | Token de autenticación inválido o expirado |
+| `VALIDATION_ERROR` | Error en la validación de parámetros |
+| `SERVER_ERROR` | Error interno del servidor |
+| `BAD_REQUEST` | Petición mal formada |
+
+## Control de Límites
+
+La API implementa un sistema de control de límites por cuenta. Cada endpoint puede verificar y consumir límites mediante el parámetro:
+
+```
+?checkLimits=true
+```
+
+- **`true`**: Verifica límites antes de ejecutar la acción y los consume solo si tiene éxito
+- **`false` u omitido**: No verifica ni consume límites (útil para testing)
+
+## Endpoints Disponibles
+
+### Invitaciones
+- `POST /invitation` - Enviar invitación de conexión
+- `POST /check-invitation` - Verificar estado de invitación
+- `GET /count-pending-invitations` - Contar invitaciones pendientes
+- `GET /pending-invitations` - Listar invitaciones pendientes
+- `POST /remove-invitation` - Eliminar invitación
+
+### Mensajes
+- `POST /send-message` - Enviar mensaje
+- `GET /conversations` - Obtener conversaciones
+- `POST /mark-conversation-read` - Marcar conversación como leída
+
+### Búsqueda
+- `POST /search-people` - Buscar perfiles
+- `POST /search-sales-navigator` - Buscar en Sales Navigator
+
+### Perfil
+- `POST /visit-profile` - Visitar perfil
+- `POST /user-data` - Obtener datos del usuario
+
+### Conexiones
+- `POST /check-connection` - Verificar conexión con perfil
+- `GET /recent-connections` - Obtener conexiones recientes
+
+## Health Check
+
+```bash
+GET /health
+```
+
+Respuesta:
+```json
+{
+  "status": "ok",
+  "ts": 1234567890.123
+}
+```

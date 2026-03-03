@@ -1,0 +1,167 @@
+---
+title: 'Autenticación'
+description: 'Cómo autenticarse con la API de LinkedIn'
+icon: 'key'
+---
+
+# Autenticación
+
+La API utiliza **JWT (JSON Web Tokens)** para autenticar todas las peticiones. El token debe incluirse en el header `X-API-Key` de cada petición.
+
+## Método de Autenticación
+
+### Header Requerido
+
+```http
+X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+Todas las peticiones a la API (excepto `/health`) requieren este header.
+
+## Estructura del Token JWT
+
+El token JWT contiene la siguiente información:
+
+```json
+{
+  "account_id": "12345",
+  "exp": 1234567890,
+  "iat": 1234567890
+}
+```
+
+### Campos del Token
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `account_id` | string | Identificador único de la cuenta |
+| `exp` | number | Timestamp de expiración del token (Unix timestamp) |
+| `iat` | number | Timestamp de emisión del token (Unix timestamp) |
+
+## Configuración
+
+El token se firma con la clave secreta configurada en las variables de entorno:
+
+```bash
+JWT_LINKEDIN_AGENT_SECRET=linkedinAgentSecretKey
+```
+
+<Warning>
+  Nunca expongas la clave secreta en el código cliente. Esta debe mantenerse
+  únicamente en el servidor.
+</Warning>
+
+## Ejemplo de Petición
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/invitation \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "publicId": "john-doe",
+    "message": "Hola, me gustaría conectar contigo"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/invitation', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    publicId: 'john-doe',
+    message: 'Hola, me gustaría conectar contigo'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {
+    'X-API-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+}
+
+body = {
+    'publicId': 'john-doe',
+    'message': 'Hola, me gustaría conectar contigo'
+}
+
+response = requests.post(
+    'https://api.example.com/api/py-linkedin/invitation',
+    headers=headers,
+    json=body
+)
+
+data = response.json()
+```
+
+</CodeGroup>
+
+## Códigos de Error de Autenticación
+
+| Código HTTP | Detalle | Descripción |
+|-------------|---------|-------------|
+| 401 | Token expired | El token JWT ha expirado |
+| 401 | Invalid token | El token JWT es inválido o está mal formado |
+| 401 | Unauthorized | El header X-API-Key no está presente |
+
+## Ejemplo de Error de Autenticación
+
+```json
+{
+  "detail": "Token expired"
+}
+```
+
+o
+
+```json
+{
+  "detail": "Invalid token"
+}
+```
+
+<Note>
+  Los errores de autenticación devuelven un formato diferente al estándar de la API,
+  ya que son manejados por el middleware de FastAPI antes de llegar a los endpoints.
+</Note>
+
+## Renovación del Token
+
+Cuando un token expira, debes solicitar uno nuevo al servicio principal de autenticación. El tiempo de vida del token es configurable en el servidor.
+
+## Variables de Entorno
+
+Las siguientes variables de entorno son necesarias para la autenticación:
+
+```bash
+# Clave secreta para firmar/verificar tokens JWT
+JWT_LINKEDIN_AGENT_SECRET=your-secret-key-here
+
+# URL de la API principal para validar cuentas
+MAIN_API_URL=http://localhost:3001/api/linkedin-agent
+
+# URL de la API v2 para control de límites
+MAIN_APIV2_URL=http://localhost:4001/api/v2
+
+# API Key para validar contra la API v2
+CONTROL_API_KEY_V2=control-api-key
+
+# Clave de encriptación para datos sensibles
+CRYPTO_SECRET_KEY=your-crypto-key-here
+```
+
+<Tip>
+  Para generar una clave secreta segura, puedes usar:
+  ```bash
+  openssl rand -base64 32
+  ```
+</Tip>

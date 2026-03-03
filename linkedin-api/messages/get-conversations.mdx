@@ -1,0 +1,193 @@
+---
+title: 'Get Conversations'
+description: 'Obtener lista de conversaciones del buzón de LinkedIn'
+api: 'GET /api/py-linkedin/conversations'
+---
+
+# Obtener Conversaciones
+
+Obtiene un listado de conversaciones del buzón de LinkedIn, con filtros por estado de lectura y paginación.
+
+## Endpoint
+
+```
+GET /api/py-linkedin/conversations
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Min | Max | Descripción |
+|-----------|------|---------|-----|-----|-------------|
+| `read` | boolean | `false` | - | - | `true` para conversaciones leídas, `false` para no leídas |
+| `cursor` | string | `null` | - | - | Cursor para paginación |
+| `count` | integer | `20` | 1 | 100 | Número de conversaciones a recuperar |
+| `checkLimits` | boolean | `false` | - | - | Verificar límites de uso |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+# Conversaciones no leídas
+curl -X GET "https://api.example.com/api/py-linkedin/conversations?read=false&count=20" \\
+  -H "X-API-Key: eyJhbGciOi JIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# Conversaciones leídas con paginación
+curl -X GET "https://api.example.com/api/py-linkedin/conversations?read=true&cursor=abc123&count=20" \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+// Conversaciones no leídas
+const response = await fetch('/api/py-linkedin/conversations?read=false&count=20', {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+
+const data = await response.json();
+
+// Siguiente página
+const nextPage = await fetch(`/api/py-linkedin/conversations?read=false&cursor=${data.response.nextCursor}&count=20`, {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/conversations'
+params = {
+    'read': False,
+    'count': 20
+}
+headers = {
+    'X-API-Key': 'your-jwt-token'
+}
+
+response = requests.get(url, params=params, headers=headers)
+data = response.json()
+
+# Siguiente página
+if data['response']['nextCursor']:
+    params['cursor'] = data['response']['nextCursor']
+    next_page = requests.get(url, params=params, headers=headers)
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "conversations": [
+      {
+        "conversationUrn": "2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg==",
+        "read": false,
+        "unreadCount": 3,
+        "lastMessage": 1234567890000,
+        "entityUrn": "ACoAAA...",
+        "lastMessageUrn": "urn:li:messagingMessage:123456"
+      },
+      {
+        "conversationUrn": "2-XxYyZz...",
+        "read": false,
+        "unreadCount": 1,
+        "lastMessage": 1234567880000,
+        "entityUrn": "ACoAAB...",
+        "lastMessageUrn": "urn:li:messagingMessage:123457"
+      }
+    ],
+    "nextCursor": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `conversations` | array | Lista de conversaciones |
+| `nextCursor` | string \| null | Cursor para la siguiente página (null si no hay más) |
+
+### Objeto Conversation
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `conversationUrn` | string | ID de la conversación (sin prefijo urn:) |
+| `read` | boolean | Indica si la conversación está leída |
+| `unreadCount` | integer | Número de mensajes no leídos |
+| `lastMessage` | integer \| null | Timestamp del último mensaje (milisegundos) |
+| `entityUrn` | string \| null | URN del otro participante (sin prefijo) |
+| `lastMessageUrn` | string \| null | URN del último mensaje (sin prefijo) |
+
+## Paginación
+
+Para obtener todas las conversaciones, usa el cursor devuelto:
+
+```javascript
+let allConversations = [];
+let cursor = null;
+
+do {
+  const params = new URLSearchParams({
+    read: false,
+    count: 20,
+    ...(cursor && { cursor })
+  });
+  
+  const response = await fetch(`/api/py-linkedin/conversations?${params}`, {
+    headers: { 'X-API-Key': 'your-jwt-token' }
+  });
+  
+  const data = await response.json();
+  allConversations.push(...data.response.conversations);
+  cursor = data.response.nextCursor;
+} while (cursor);
+```
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | Parámetros fuera de rango |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Casos de Uso
+
+- Monitorear conversaciones no leídas
+- Listar todas las conversaciones activas
+- Identificar conversaciones con mensajes pendientes
+- Gestión de buzón de entrada automatizada
+
+## Endpoints Relacionados
+
+- `GET /recent-conversations` - Obtener conversaciones recientes (incluye todas)
+- `POST /mark-conversation-read` - Marcar conversación como leída
+- `POST /send-message` - Enviar mensaje en una conversación
+
+<Tip>
+  Usa `read=false` para obtener solo las conversaciones con mensajes sin leer,
+  ideal para sistemas de notificación.
+</Tip>
+
+<Info>
+  El `conversationUrn` devuelto puede usarse directamente en `/send-message`
+  para responder en esa conversación.
+</Info>

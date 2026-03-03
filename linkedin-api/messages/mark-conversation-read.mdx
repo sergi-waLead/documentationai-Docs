@@ -1,0 +1,185 @@
+---
+title: 'Mark Conversation Read'
+description: 'Marcar una conversación como leída'
+api: 'POST /api/py-linkedin/mark-conversation-read'
+---
+
+# Marcar Conversación como Leída
+
+Marca una conversación de LinkedIn como leída, limpiando el contador de mensajes no leídos.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/mark-conversation-read
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `conversationUrn` | string | Sí | URN de la conversación a marcar como leída |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/mark-conversation-read \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "conversationUrn": "2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg=="
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/mark-conversation-read', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    conversationUrn: '2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg=='
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/mark-conversation-read'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'conversationUrn': '2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg=='
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "conversation_marked_read",
+    "conversationUrn": "2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg=="
+  },
+  "error": null
+}
+```
+
+### Respuesta de Error
+
+```json
+{
+  "success": false,
+  "response": null,
+  "error": {
+    "code": "INVALID_PAYLOAD",
+    "description": "The conversation could not be found",
+    "data": {
+      "stage": "mark_conversation",
+      "conversationUrn": "invalid"
+    }
+  }
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `status` | string | Estado de la operación (`conversation_marked_read`) |
+| `conversationUrn` | string | URN de la conversación marcada como leída |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | conversationUrn inválido o faltante |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 404 | `NOT_FOUND` | Conversación no encontrada |
+| 422 | `VALIDATION_ERROR` | Error en la validación de datos |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Casos de Uso
+
+- Gestionar buzón de entrada automatizado
+- Marcar conversaciones procesadas como leídas
+- Sincronizar estado de lectura con otros sistemas
+- Mantener el buzón organizado
+
+## Ejemplo de Flujo de Trabajo
+
+```javascript
+// 1. Obtener conversaciones no leídas
+const unreadResponse = await fetch('/api/py-linkedin/conversations?read=false', {
+  headers: { 'X-API-Key': 'your-jwt-token' }
+});
+
+const { conversations } = unreadResponse.json().response;
+
+// 2. Procesar cada conversación
+for (const conv of conversations) {
+  // Procesar mensajes de la conversación
+  await processConversation(conv);
+  
+  // 3. Marcar como leída después de procesar
+  await fetch('/api/py-linkedin/mark-conversation-read', {
+    method: 'POST',
+    headers: {
+      'X-API-Key': 'your-jwt-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      conversationUrn: conv.conversationUrn
+    })
+  });
+}
+```
+
+## Endpoints Relacionados
+
+- `GET /conversations` - Obtener lista de conversaciones
+- `GET /recent-conversations` - Obtener conversaciones recientes
+- `POST /send-message` - Enviar mensaje en una conversación
+
+<Info>
+  Marcar una conversación como leída restablece el contador `unreadCount` a 0.
+</Info>
+
+<Tip>
+  Combina este endpoint con `/conversations?read=false` para crear un sistema
+  automatizado de gestión de mensajes.
+</Tip>
+
+## Notas Importantes
+
+<Warning>
+  Asegúrate de usar el `conversationUrn` completo tal como lo devuelven los
+  endpoints `/conversations` o `/send-message`.
+</Warning>
+
+- El URN de la conversación debe incluir el prefijo correcto del formato de LinkedIn
+- No se requiere autenticación adicional más allá del token JWT
+- La operación es idempotente: marcar una conversación ya leída no genera error

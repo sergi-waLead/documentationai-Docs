@@ -1,0 +1,186 @@
+---
+title: 'Get User Data'
+description: 'Obtener datos del propio perfil de LinkedIn'
+api: 'GET /api/py-linkedin/user-data'
+---
+
+# Obtener Datos de Usuario
+
+Obtiene los datos del perfil propio de la cuenta autenticada en LinkedIn.
+
+## Endpoint
+
+```
+GET /api/py-linkedin/user-data
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `checkLimits` | boolean | `false` | Si es `true`, verifica y consume límites de uso |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://api.example.com/api/py-linkedin/user-data \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/user-data', {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/user-data'
+headers = {
+    'X-API-Key': 'your-jwt-token'
+}
+
+response = requests.get(url, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "publicId": "john-doe",
+    "entityUrn": "urn:li:fsd_profile:ACoAAA...",
+    "firstName": "John",
+    "lastName": "Doe",
+    "headline": "Software Engineer at Tech Corp",
+    "location": "San Francisco Bay Area",
+    "summary": "Passionate software engineer with 10 years of experience...",
+    "industry": "Computer Software",
+    "pictureUrl": "https://media.licdn.com/...",
+    "profileUrl": "https://www.linkedin.com/in/john-doe",
+    "connections": 500,
+    "premium": true
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+<Note>
+  Los campos devueltos pueden variar según la información disponible en el perfil.
+</Note>
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `publicId` | string | ID público del perfil |
+| `entityUrn` | string | URN del perfil |
+| `firstName` | string | Primer nombre |
+| `lastName` | string | Apellido |
+| `headline` | string | Titular profesional |
+| `location` | string | Ubicación actual |
+| `summary` | string | Resumen del perfil |
+| `industry` | string | Industria profesional |
+| `pictureUrl` | string | URL de la foto de perfil |
+| `profileUrl` | string | URL pública del perfil |
+| `connections` | integer | Número de conexiones |
+| `premium` | boolean | Indica si tiene cuenta Premium |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Casos de Uso
+
+- **Verificación de cuenta**: Confirmar que la autenticación funciona correctamente
+- **Perfilado de usuario**: Obtener información del usuario autenticado
+- **Personalización**: Adaptar la aplicación según el perfil del usuario
+- **Analytics**: Rastrear características de los usuarios
+- **Inicialización**: Obtener datos básicos al iniciar sesión
+
+## Ejemplo de Integración
+
+```javascript
+// Verificar datos del usuario al iniciar sesión
+async function initializeUser() {
+  try {
+    const response = await fetch('/api/py-linkedin/user-data', {
+      headers: {
+        'X-API-Key': localStorage.getItem('linkedinToken')
+      }
+    });
+    
+    const { success, response: userData } = await response.json();
+    
+    if (success) {
+      console.log(`Welcome, ${userData.firstName}!`);
+      console.log(`You have ${userData.connections} connections`);
+      
+      // Guardar datos del usuario en el estado de la aplicación
+      store.dispatch(setUser(userData));
+      
+      return userData;
+    }
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+  }
+}
+```
+
+## Endpoints Relacionados
+
+- `POST /visit-profile` - Visitar otros perfiles
+- `GET /recent-connections` - Obtener conexiones recientes
+- `POST /check-connection` - Verificar conexión con otros perfiles
+
+<Tip>
+  Usa este endpoint al inicio de la sesión para verificar que el token es válido
+  y obtener información básica del usuario autenticado.
+</Tip>
+
+<Info>
+  Este endpoint devuelve información del perfil **propio**, no de otros usuarios.
+  Para obtener datos de otros perfiles, usa endpoints de búsqueda o visita de perfiles.
+</Info>
+
+## Notas Importantes
+
+- No requiere parámetros adicionales más allá de la autenticación
+- La información devuelta depende de lo que esté disponible en el perfil
+- Es un endpoint ligero ideal para health checks y verificación
+- No consume límites significativos (es una operación de lectura propia)
+
+## Privacy y Seguridad
+
+<Warning>
+  Los datos del usuario deben manejarse según las regulaciones de privacidad (GDPR, CCPA, etc.).
+  No almacenes información sensible innecesariamente.
+</Warning>
+
+- Almacena solo los datos necesarios
+- Implementa cifrado para datos sensibles
+- Respeta las preferencias de privacidad del usuario
+- Cumple con las políticas de LinkedIn sobre uso de datos

@@ -1,0 +1,179 @@
+---
+title: 'Send Invitation'
+description: 'Enviar una invitación de conexión en LinkedIn'
+api: 'POST /api/py-linkedin/invitation'
+---
+
+# Enviar Invitación
+
+Envía una invitación de conexión a un perfil de LinkedIn.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/invitation
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `checkLimits` | boolean | `false` | Si es `true`, verifica y consume límites de uso |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `publicId` | string | No* | ID público del perfil (ej: `john-doe`) |
+| `entityUrn` | string | No* | URN del perfil (ej: `urn:li:fsd_profile:ACoAAA...`) |
+| `message` | string | No | Mensaje personalizado de la invitación (máx. 300 caracteres) |
+| `forceExtractProfileUrn` | boolean | No | Fuerza la extracción del URN del perfil |
+
+<Note>
+  *Al menos uno de `publicId` o `entityUrn` es requerido.
+</Note>
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/invitation?checkLimits=true \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "publicId": "john-doe",
+    "message": "Hola John, me gustaría conectar contigo para hablar sobre oportunidades de negocio."
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/invitation?checkLimits=true', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    publicId: 'john-doe',
+    message: 'Hola John, me gustaría conectar contigo para hablar sobre oportunidades de negocio.'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/invitation'
+params = {'checkLimits': 'true'}
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'publicId': 'john-doe',
+    'message': 'Hola John, me gustaría conectar contigo para hablar sobre oportunidades de negocio.'
+}
+
+response = requests.post(url, params=params, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "invitation_sent",
+    "invitationUrn": "urn:li:fs_invitation:12345",
+    "entityUrn": "ACoAAA..."
+  },
+  "error": null
+}
+```
+
+### Estados Posibles
+
+| Estado | Descripción |
+|--------|-------------|
+| `invitation_sent` | Invitación enviada exitosamente |
+| `already_connected` | Ya estás conectado con este perfil |
+| `cant_resend_yet` | No puedes reenviar la invitación todavía |
+| `pending_invitation` | Ya existe una invitación pendiente |
+
+### Respuesta con Límite Alcanzado
+
+```json
+{
+  "success": false,
+  "response": null,
+  "error": {
+    "code": "RATE_LIMIT",
+    "description": "limit_invitation_reached",
+    "data": {
+      "remaining": 0
+    }
+  }
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `status` | string | Estado de la operación |
+| `invitationUrn` | string \| null | URN de la invitación si se envió |
+| `entityUrn` | string \| null | URN del perfil invitado |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | Parámetros inválidos o faltantes |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | Error en la validación de datos |
+| 429 | `RATE_LIMIT` | Límite de invitaciones alcanzado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Notas Importantes
+
+<Warning>
+  LinkedIn limita el número de invitaciones que puedes enviar por período de tiempo.
+  Usa `checkLimits=true` para evitar exceder estos límites.
+</Warning>
+
+<Tip>
+  Los mensajes personalizados aumentan la tasa de aceptación de invitaciones, pero
+  no son obligatorios.
+</Tip>
+
+<Info>
+  Si proporcionas ambos `publicId` y `entityUrn`, se usará el `entityUrn` preferentemente.
+</Info>
+
+## Control de Límites
+
+Cuando `checkLimits=true`:
+1. Verifica si la cuenta tiene invitaciones disponibles
+2. Envía la invitación si hay cuota disponible
+3. Incrementa el contador de uso solo si la invitación se envió exitosamente
+4. Retorna error `RATE_LIMIT` si no hay cuota disponible
+
+Cuando `checkLimits=false` u omitido:
+- No verifica límites
+- No incrementa contadores
+- Útil para testing o cuentas sin límites

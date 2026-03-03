@@ -1,0 +1,232 @@
+---
+title: 'Send Message'
+description: 'Enviar un mensaje en LinkedIn'
+api: 'POST /api/py-linkedin/send-message'
+---
+
+# Enviar Mensaje
+
+Envía un mensaje a un perfil de LinkedIn. Puede ser en una conversación existente o iniciar una nueva.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/send-message
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `checkLimits` | boolean | `false` | Si es `true`, verifica y consume límites de uso |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `message` | string | Sí | Contenido del mensaje a enviar |
+| `entityUrn` | string | No* | URN del perfil destinatario |
+| `conversationUrn` | string | No* | URN de la conversación existente |
+| `mailboxUrn` | string | No | URN del buzón (opcional) |
+
+<Note>
+  *Debes proporcionar `entityUrn` (para nueva conversación) o `conversationUrn` (para conversación existente).
+</Note>
+
+## Ejemplo de Request
+
+### Nueva Conversación
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/send-message \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "entityUrn": "ACoAAA...",
+    "message": "Hola, gracias por conectar. Me gustaría hablar sobre oportunidades de colaboración."
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/send-message', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    entityUrn: 'ACoAAA...',
+    message: 'Hola, gracias por conectar. Me gustaría hablar sobre oportunidades de colaboración.'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/send-message'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'entityUrn': 'ACoAAA...',
+    'message': 'Hola, gracias por conectar. Me gustaría hablar sobre oportunidades de colaboración.'
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+### Conversación Existente
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/send-message \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "conversationUrn": "2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg==",
+    "message": "Gracias por tu respuesta. Quedamos en contacto."
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/send-message', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    conversationUrn: '2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg==',
+    message: 'Gracias por tu respuesta. Quedamos en contacto.'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/send-message'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'conversationUrn': '2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg==',
+    'message': 'Gracias por tu respuesta. Quedamos en contacto.'
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "message_sent",
+    "conversationUrn": "2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg==",
+    "messageUrn": "urn:li:messagingMessage:(2-YzU3MWI2N2ItZjdlMi00ZjfiLThhOTQtOTRiMGFlZTQ5ZTliXzAxMg==,123456)"
+  },
+  "error": null
+}
+```
+
+### Estados Posibles
+
+| Estado | Descripción |
+|--------|-------------|
+| `message_sent` | Mensaje enviado exitosamente |
+| `rejected` | Mensaje rechazado (no es conexión de 1er grado) |
+| `blocked` | El destinatario te ha bloqueado |
+| `unauthorized` | No tienes permiso para enviar mensajes a este perfil |
+| `message_debug` | Modo debug (sin envío real) |
+
+### Respuesta de Error
+
+```json
+{
+  "success": false,
+  "response": null,
+  "error": {
+    "code": "INVALID_PAYLOAD",
+    "description": "rejected",
+    "data": {
+      "stage": "send_message"
+    }
+  }
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `status` | string | Estado de la operación |
+| `conversationUrn` | string \| null | ID de la conversación (sin prefijo urn:) |
+| `messageUrn` | string \| null | URN del mensaje enviado |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | Parámetros inválidos o faltantes |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | Mensaje vacío o parámetros incorrectos |
+| 429 | `RATE_LIMIT` | Límite de mensajes alcanzado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Restricciones de LinkedIn
+
+<Warning>
+  Solo puedes enviar mensajes a perfiles con los que estés conectado (1er grado).
+  Los mensajes a perfiles no conectados serán rechazados.
+</Warning>
+
+<Info>
+  LinkedIn tiene límites en el número de mensajes que puedes enviar por día.
+  Usa `checkLimits=true` para monitorear tu uso.
+</Info>
+
+## Buenas Prácticas
+
+1. **Personaliza tus mensajes**: Evita mensajes genéricos o spam
+2. **Respeta los límites**: No envíes demasiados mensajes en poco tiempo
+3. **Verifica la conexión**: Asegúrate de estar conectado con el destinatario
+4. **Guarda conversationUrn**: Para continuar conversaciones, guarda el URN devuelto
+
+## Casos de Uso
+
+- Enviar mensajes de seguimiento después de conectar
+- Responder a conversaciones existentes
+- Automatizar campañas de outreach personalizadas
+- Gestionar comunicaciones con leads
+
+<Tip>
+  Cuando inicies una nueva conversación, guarda el `conversationUrn` devuelto
+  para usar en mensajes futuros de la misma conversación.
+</Tip>

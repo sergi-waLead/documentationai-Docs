@@ -1,0 +1,130 @@
+---
+title: 'Remove Invitation'
+description: 'Retirar una invitación pendiente'
+api: 'POST /api/py-linkedin/remove-invitation'
+---
+
+# Retirar Invitación
+
+Retira una invitación de conexión que hayas enviado y esté pendiente.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/remove-invitation
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `invitationUrn` | string | Sí | URN de la invitación a retirar |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/remove-invitation \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "invitationUrn": "urn:li:fs_invitation:12345"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/remove-invitation', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    invitationUrn: 'urn:li:fs_invitation:12345'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/remove-invitation'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'invitationUrn': 'urn:li:fs_invitation:12345'
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "invitation_removed",
+    "invitationUrn": "12345"
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `status` | string | Estado de la operación (`invitation_removed`) |
+| `invitationUrn` | string | URN de la invitación retirada (sin prefijo) |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | invitationUrn inválido o faltante |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 404 | `NOT_FOUND` | Invitación no encontrada o ya procesada |
+| 422 | `VALIDATION_ERROR` | Error en la validación de datos |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Uso
+
+Este endpoint es útil para:
+- Liberar cuota de invitaciones pendientes
+- Retirar invitaciones antiguas sin respuesta
+- Limpiar invitaciones enviadas por error
+- Gestionar tu lista de invitaciones pendientes
+
+<Warning>
+  Una vez retirada, no podrás volver a enviar la invitación inmediatamente.
+  LinkedIn puede requerir un período de espera antes de permitir un nuevo intento.
+</Warning>
+
+<Tip>
+  Usa `/count-pending-invitations` para monitorear cuándo es necesario retirar
+  invitaciones antiguas para liberar cuota.
+</Tip>
+
+## Buenas Prácticas
+
+1. **Retira invitaciones antiguas**: Si una invitación lleva más de 2-3 semanas sin respuesta, considera retirarla
+2. **Monitorea tu cuota**: LinkedIn limita las invitaciones pendientes; retira las que no tengan respuesta
+3. **Verifica el estado primero**: Usa `/check-invitation` antes de retirar para confirmar que sigue pendiente

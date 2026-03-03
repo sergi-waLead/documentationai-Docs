@@ -1,0 +1,122 @@
+---
+title: 'Check Invitation'
+description: 'Verificar el estado de una invitación enviada'
+api: 'POST /api/py-linkedin/check-invitation'
+---
+
+# Verificar Invitación
+
+Verifica el estado actual de una invitación que has enviado previamente.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/check-invitation
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `invitationUrn` | string | Sí | URN de la invitación a verificar |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/check-invitation \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "invitationUrn": "urn:li:fs_invitation:12345"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/check-invitation', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    invitationUrn: 'urn:li:fs_invitation:12345'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/check-invitation'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'invitationUrn': 'urn:li:fs_invitation:12345'
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "pending"
+  },
+  "error": null
+}
+```
+
+### Estados Posibles
+
+| Estado | Descripción |
+|--------|-------------|
+| `pending` | La invitación está pendiente de aceptación |
+| `accepted` | La invitación fue aceptada |
+| `rejected` | La invitación fue rechazada |
+| `withdrawn` | La invitación fue retirada por el remitente |
+| `expired` | La invitación expiró |
+| `blocked` | El perfil bloqueó al remitente |
+| `unknown` | Estado desconocido |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | invitationUrn inválido o faltante |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | Error en la validación de datos |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Uso
+
+Este endpoint es útil para:
+- Hacer seguimiento de invitaciones enviadas
+- Identificar invitaciones rechazadas
+- Detectar perfiles que te han bloqueado
+- Limpiar invitaciones expiradas
+
+<Tip>
+  Usa este endpoint antes de intentar reenviar una invitación para evitar
+  errores de duplicados.
+</Tip>

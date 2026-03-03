@@ -1,0 +1,279 @@
+---
+title: 'Search People'
+description: 'Buscar perfiles de LinkedIn con filtros avanzados'
+api: 'POST /api/py-linkedin/search-people'
+---
+
+# Buscar Perfiles
+
+Busca perfiles de LinkedIn utilizando la barra de búsqueda con múltiples filtros avanzados.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/search-people
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `checkLimits` | boolean | `false` | Si es `true`, verifica y consume límites de uso |
+
+## Body Parameters
+
+| Campo | Tipo | Default | Descripción |
+|-------|------|---------|-------------|
+| `query` | object | - | Objeto con los parámetros de búsqueda |
+
+### Objeto Query
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `keywords` | string | Palabras clave de búsqueda general |
+| `connection_of` | string \| array | publicId de conexión(es) de primer grado |
+| `contact_interests` | array | Intereses de contacto |
+| `current_company` | array | IDs de empresas actuales |
+| `include_private_profiles` | boolean | Incluir perfiles privados |
+| `industries` | array | Códigos de industria |
+| `keyword_company` | string | Palabras clave en empresa |
+| `keyword_first_name` | string | Palabras clave en nombre |
+| `keyword_last_name` | string | Palabras clave en apellido |
+| `keyword_school` | string | Palabras clave en escuela |
+| `keyword_title` | string | Palabras clave en título |
+| `network_depths` | array | Grados de conexión (`["F", "S", "O"]`) |
+| `nonprofit_interests` | array | Intereses en organizaciones sin fines de lucro |
+| `past_companies` | array | IDs de empresas anteriores |
+| `profile_languages` | array | Idiomas del perfil |
+| `regions` | array | Códigos de región |
+| `geoUrn` | array | URNs geográficos |
+| `schools` | array | IDs de escuelas/universidades |
+| `service_categories` | array | Categorías de servicio |
+| `limit` | integer | Número máximo de resultados (default: `25`) |
+| `offset` | integer | Offset para paginación (default: `0`) |
+| `origin` | string | Origen de la búsqueda (default: `FACETED_SEARCH`) |
+| `eventAttending` | array | IDs de eventos a los que asiste |
+| `followerOf` | string | ID de perfil del que es seguidor |
+
+## Ejemplo de Request
+
+### Búsqueda Simple
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/search-people \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": {
+      "keywords": "software engineer",
+      "limit": 25,
+      "offset": 0
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/search-people', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: {
+      keywords: 'software engineer',
+      limit: 25,
+      offset: 0
+    }
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/search-people'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'query': {
+        'keywords': 'software engineer',
+        'limit': 25,
+        'offset': 0
+    }
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+### Búsqueda Avanzada
+
+<CodeGroup>
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/search-people', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: {
+      keyword_title: 'CEO',
+      current_company: ['1234', '5678'],
+      regions: ['es:0'],
+      network_depths: ['S'],  // Conexiones de 2do grado
+      limit: 50,
+      offset: 0
+    }
+  })
+});
+```
+
+```python Python
+body = {
+    'query': {
+        'keyword_title': 'CEO',
+        'current_company': ['1234', '5678'],
+        'regions': ['es:0'],
+        'network_depths': ['S'],  # Conexiones de 2do grado
+        'limit': 50,
+        'offset': 0
+    }
+}
+
+response = requests.post(url, headers=headers, json=body)
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "count": 2,
+    "people": [
+      {
+        "urn": "ACoAAA...",
+        "publicId": "john-doe",
+        "name": "John Doe",
+        "firstName": "John",
+        "lastName": "Doe",
+        "headline": "Software Engineer at Tech Corp",
+        "locationName": "San Francisco Bay Area",
+        "summary": "Experienced software engineer...",
+        "pictureUrl": "https://media.licdn.com/..."
+      },
+      {
+        "urn": "ACoAAB...",
+        "publicId": "jane-smith",
+        "name": "Jane Smith",
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "headline": "Senior Software Engineer",
+        "locationName": "New York City",
+        "summary": "Passionate about technology...",
+        "pictureUrl": "https://media.licdn.com/..."
+      }
+    ]
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `count` | integer | Número total de resultados devueltos |
+| `people` | array | Lista de perfiles encontrados |
+
+### Objeto Person
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `urn` | string \| null | URN del perfil (ID único) |
+| `publicId` | string \| null | ID público del perfil |
+| `name` | string \| null | Nombre completo |
+| `firstName` | string \| null | Primer nombre |
+| `lastName` | string \| null | Apellido |
+| `headline` | string \| null | Titular profesional |
+| `locationName` | string \| null | Ubicación |
+| `summary` | string \| null | Resumen del perfil |
+| `pictureUrl` | string \| null | URL de la foto de perfil |
+
+## Network Depths (Grados de Conexión)
+
+| Valor | Descripción |
+|-------|-------------|
+| `F` | Conexiones de 1er grado (First degree) |
+| `S` | Conexiones de 2do grado (Second degree) |
+| `O` | Conexiones de 3er grado (Out of network) |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | Parámetros de búsqueda inválidos |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | Error en la validación de parámetros |
+| 429 | `RATE_LIMIT` | Límite de búsquedas alcanzado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Paginación
+
+Para paginar resultados, usa `offset` y `limit`:
+
+```javascript
+// Primera página (25 resultados)
+{ query: { keywords: 'engineer', limit: 25, offset: 0 } }
+
+// Segunda página
+{ query: { keywords: 'engineer', limit: 25, offset: 25 } }
+
+// Tercera página
+{ query: { keywords: 'engineer', limit: 25, offset: 50 } }
+```
+
+## Casos de Uso
+
+- Prospectar leads por industria y ubicación
+- Encontrar conexiones de segundo grado
+- Buscar profesionales por título y empresa
+- Identificar perfiles para outreach
+- Analizar mercado y competencia
+
+<Warning>
+  LinkedIn limita el número de búsquedas y resultados que puedes obtener.
+  Usa filtros específicos para obtener resultados más relevantes.
+</Warning>
+
+<Tip>
+  Combina múltiples filtros para afinar tu búsqueda y obtener resultados
+  más precisos y relevantes para tu caso de uso.
+</Tip>
+
+<Info>
+  Los URNs devueltos pueden usarse directamente en endpoints como
+  `/invitation` o `/check-connection`.
+</Info>

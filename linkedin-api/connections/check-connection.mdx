@@ -1,0 +1,237 @@
+---
+title: 'Check Connection'
+description: 'Verificar si existe conexión con un perfil'
+api: 'POST /api/py-linkedin/check-connection'
+---
+
+# Verificar Conexión
+
+Verifica si ya existe una conexión de primer grado con un perfil específico de LinkedIn.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/check-connection
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `publicId` | string | No* | ID público del perfil (ej: `john-doe`) |
+| `entityUrn` | string | No* | URN del perfil (ej: `ACoAAA...`) |
+
+<Note>
+  *Al menos uno de `publicId` o `entityUrn` es requerido.
+</Note>
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/check-connection \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "publicId": "john-doe"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/check-connection', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    publicId: 'john-doe'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/check-connection'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'publicId': 'john-doe'
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Ya Conectado
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "already_connected",
+    "entityUrn": "ACoAAA..."
+  },
+  "error": null
+}
+```
+
+### No Conectado
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "not_connected",
+    "entityUrn": null
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `status` | string | `already_connected` o `not_connected` |
+| `entityUrn` | string \| null | URN del perfil si está conectado |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | Falta publicId o entityUrn |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 404 | `PROFILE_NOT_FOUND` | Perfil no encontrado |
+| 422 | `VALIDATION_ERROR` | Error en la validación de datos |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Casos de Uso
+
+- **Pre-validación**: Verificar conexión antes de enviar invitación
+- **Filtrado de leads**: Identificar perfiles ya conectados
+- **Segmentación**: Separar contactos conectados de no conectados
+- **Prevención de errores**: Evitar intentar conectar con perfiles ya conectados
+- **Analytics**: Medir tasa de conexión con tu red
+
+## Ejemplo de Flujo de Trabajo
+
+```javascript
+// Verificar conexión antes de enviar invitación
+async function sendConnectionRequest(publicId) {
+  // 1. Verificar si ya está conectado
+  const checkResponse = await fetch('/api/py-linkedin/check-connection', {
+    method: 'POST',
+    headers: {
+      'X-API-Key': 'your-jwt-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ publicId })
+  });
+  
+  const { response: checkData } = await checkResponse.json();
+  
+  if (checkData.status === 'already_connected') {
+    console.log('Already connected with this profile');
+    return { skipped: true, reason: 'already_connected' };
+  }
+  
+  // 2. Si no está conectado, enviar invitación
+  const inviteResponse = await fetch('/api/py-linkedin/invitation', {
+    method: 'POST',
+    headers: {
+      'X-API-Key': 'your-jwt-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      publicId,
+      message: 'Hi! I would like to connect with you.'
+    })
+  });
+  
+  return inviteResponse.json();
+}
+```
+
+## Ejemplo con Lista de Perfiles
+
+```javascript
+// Filtrar perfiles no conectados de una lista
+async function filterUnconnectedProfiles(profiles) {
+  const results = await Promise.all(
+    profiles.map(async (profile) => {
+      const response = await fetch('/api/py-linkedin/check-connection', {
+        method: 'POST',
+        headers: {
+          'X-API-Key': 'your-jwt-token',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ publicId: profile.publicId })
+      });
+      
+      const { response: data } = await response.json();
+      
+      return {
+        ...profile,
+        isConnected: data.status === 'already_connected'
+      };
+    })
+  );
+  
+  // Filtrar solo no conectados
+  return results.filter(p => !p.isConnected);
+}
+```
+
+## Endpoints Relacionados
+
+- `POST /invitation` - Enviar invitación a perfiles no conectados
+- `GET /recent-connections` - Ver conexiones recientes
+- `POST /send-message` - Enviar mensaje (solo a conectados)
+
+<Tip>
+  Usa este endpoint antes de enviar invitaciones masivas para filtrar perfiles
+  ya conectados y ahorrar cuota de invitaciones.
+</Tip>
+
+<Info>
+  Este endpoint solo verifica conexiones de **primer grado** (directas).
+  No detecta conexiones de 2do o 3er grado.
+</Info>
+
+<Warning>
+  Aunque este endpoint no consume muchos recursos, evita hacer verificaciones
+  excesivas en poco tiempo para mantener un comportamiento natural.
+</Warning>
+
+## Buenas Prácticas
+
+1. **Cache results**: Guarda resultados para evitar checks redundantes
+2. **Batch verification**: Agrupa verificaciones con delays entre ellas
+3. **Error handling**: Maneja casos donde el perfil no existe
+4. **Combinar con búsqueda**: Filtra resultados de búsqueda antes de actuar
+5. **Actualizar estado**: Marca perfiles como conectados en tu base de datos
+
+## Limitaciones
+
+- Solo verifica conexiones de 1er grado
+- Requiere que el perfil exista y sea accesible
+- No detecta invitaciones pendientes (usa `/check-invitation` para eso)
+- No indica cuándo se estableció la conexión

@@ -1,0 +1,161 @@
+---
+title: 'Pending Invitations'
+description: 'Obtener listado de invitaciones pendientes enviadas'
+api: 'GET /api/py-linkedin/pending-invitations'
+---
+
+# Invitaciones Pendientes
+
+Obtiene un listado de todas las invitaciones que has enviado y están pendientes de respuesta.
+
+## Endpoint
+
+```
+GET /api/py-linkedin/pending-invitations
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Min | Max | Descripción |
+|-----------|------|---------|-----|-----|-------------|
+| `start` | integer | `0` | 0 | - | Offset de los resultados (paginación) |
+| `count` | integer | `20` | 1 | 100 | Número de invitaciones a recuperar |
+| `checkLimits` | boolean | `false` | - | - | Verificar límites de uso |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET "https://api.example.com/api/py-linkedin/pending-invitations?start=0&count=20" \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/pending-invitations?start=0&count=20', {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/pending-invitations'
+params = {
+    'start': 0,
+    'count': 20
+}
+headers = {
+    'X-API-Key': 'your-jwt-token'
+}
+
+response = requests.get(url, params=params, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "total": 45,
+    "invitations": [
+      {
+        "invitationUrn": "12345",
+        "entityUrn": "ACoAAA...",
+        "publicId": "john-doe",
+        "name": "John Doe",
+        "headline": "Software Engineer at Tech Corp",
+        "pictureUrl": "https://...",
+        "sentTime": 1234567890000
+      },
+      {
+        "invitationUrn": "12346",
+        "entityUrn": "ACoAAB...",
+        "publicId": "jane-smith",
+        "name": "Jane Smith",
+        "headline": "Product Manager",
+        "pictureUrl": "https://...",
+        "sentTime": 1234567891000
+      }
+    ]
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `total` | integer | Número total de invitaciones pendientes |
+| `invitations` | array | Lista de invitaciones pendientes |
+
+### Objeto Invitation
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `invitationUrn` | string | URN de la invitación (sin prefijo) |
+| `entityUrn` | string \| null | URN del perfil invitado (sin prefijo) |
+| `publicId` | string \| null | ID público del perfil |
+| `name` | string \| null | Nombre completo del perfil |
+| `headline` | string \| null | Titular profesional |
+| `pictureUrl` | string \| null | URL de la foto de perfil |
+| `sentTime` | integer \| null | Timestamp de envío (milisegundos) |
+
+## Paginación
+
+Para paginar los resultados, usa los parámetros `start` y `count`:
+
+```javascript
+// Primera página (primeras 20 invitaciones)
+GET /pending-invitations?start=0&count=20
+
+// Segunda página (siguientes 20 invitaciones)
+GET /pending-invitations?start=20&count=20
+
+// Tercera página
+GET /pending-invitations?start=40&count=20
+```
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | Parámetros fuera de rango |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Uso
+
+Este endpoint es útil para:
+- Monitorear invitaciones enviadas
+- Identificar invitaciones antiguas para retirar
+- Gestionar tu cuota de invitaciones pendientes
+- Analizar tasas de aceptación
+
+<Info>
+  LinkedIn limita el número de invitaciones pendientes que puedes tener.
+  Retira invitaciones antiguas para liberar cuota.
+</Info>
+
+<Tip>
+  Combina este endpoint con `/check-invitation` para obtener el estado
+  actualizado de cada invitación.
+</Tip>

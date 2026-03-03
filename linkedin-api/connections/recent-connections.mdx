@@ -1,0 +1,308 @@
+---
+title: 'Recent Connections'
+description: 'Obtener lista de conexiones recientes'
+api: 'GET /api/py-linkedin/recent-connections'
+---
+
+# Conexiones Recientes
+
+Obtiene una lista de tus conexiones recientes en LinkedIn, con opciones de filtrado y paginación.
+
+## Endpoint
+
+```
+GET /api/py-linkedin/recent-connections
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `startIndex` | integer | `0` | Offset de los resultados (paginación) |
+| `sort` | string | `null` | Clave de ordenamiento de LinkedIn |
+| `name` | string | `null` | Filtrar conexiones por nombre |
+| `checkLimits` | boolean | `false` | Verificar límites de uso |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+# Obtener primeras conexiones
+curl -X GET "https://api.example.com/api/py-linkedin/recent-connections?startIndex=0" \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# Filtrar por nombre
+curl -X GET "https://api.example.com/api/py-linkedin/recent-connections?name=John&startIndex=0" \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+// Obtener conexiones recientes
+const response = await fetch('/api/py-linkedin/recent-connections?startIndex=0', {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+
+const data = await response.json();
+
+// Filtrar por nombre
+const filteredResponse = await fetch('/api/py-linkedin/recent-connections?name=John&startIndex=0', {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/recent-connections'
+headers = {
+    'X-API-Key': 'your-jwt-token'
+}
+
+# Obtener conexiones recientes
+params = {'startIndex': 0}
+response = requests.get(url, params=params, headers=headers)
+data = response.json()
+
+# Filtrar por nombre
+params = {'name': 'John', 'startIndex': 0}
+filtered = requests.get(url, params=params, headers=headers)
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "total": 500,
+    "connections": [
+      {
+        "entityUrn": "ACoAAA...",
+        "publicId": "john-doe",
+        "name": "John Doe",
+        "firstName": "John",
+        "lastName": "Doe",
+        "headline": "Software Engineer at Tech Corp",
+        "location": "San Francisco Bay Area",
+        "pictureUrl": "https://media.licdn.com/...",
+        "connectedAt": 1234567890000
+      },
+      {
+        "entityUrn": "ACoAAB...",
+        "publicId": "jane-smith",
+        "name": "Jane Smith",
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "headline": "Product Manager",
+        "location": "New York City",
+        "pictureUrl": "https://media.licdn.com/...",
+        "connectedAt": 1234567880000
+      }
+    ],
+    "nextSort": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `total` | integer | Número total de conexiones |
+| `connections` | array | Lista de conexiones |
+| `nextSort` | string \| null | Clave de ordenamiento para siguiente página |
+
+### Objeto Connection
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `entityUrn` | string | URN del perfil (sin prefijo) |
+| `publicId` | string \| null | ID público del perfil |
+| `name` | string | Nombre completo |
+| `firstName` | string | Primer nombre |
+| `lastName` | string | Apellido |
+| `headline` | string \| null | Titular profesional |
+| `location` | string \| null | Ubicación |
+| `pictureUrl` | string \| null | URL de la foto de perfil |
+| `connectedAt` | integer \| null | Timestamp de conexión (milisegundos) |
+
+## Paginación
+
+Para paginar los resultados:
+
+```javascript
+let allConnections = [];
+let startIndex = 0;
+const pageSize = 50;
+
+do {
+  const response = await fetch(
+    `/api/py-linkedin/recent-connections?startIndex=${startIndex}`,
+    { headers: { 'X-API-Key': 'your-jwt-token' } }
+  );
+  
+  const { response: data } = await response.json();
+  allConnections.push(...data.connections);
+  
+  startIndex += pageSize;
+  
+  // Continuar mientras haya más conexiones
+} while (allConnections.length < data.total);
+```
+
+## Filtrado por Nombre
+
+Usa el parámetro `name` para buscar conexiones específicas:
+
+```javascript
+// Buscar todas las conexiones llamadas "John"
+const response = await fetch(
+  '/api/py-linkedin/recent-connections?name=John',
+  { headers: { 'X-API-Key': 'your-jwt-token' } }
+);
+```
+
+<Info>
+  El filtrado por nombre busca coincidencias parciales en el nombre completo.
+</Info>
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 422 | `VALIDATION_ERROR` | startIndex fuera de rango |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Casos de Uso
+
+- **Análisis de red**: Estudiar tus conexiones recientes
+- **Seguimiento**: Hacer follow-up con nuevas conexiones
+- **Segmentación**: Clasificar conexiones por características
+- **Exportación**: Sincronizar conexiones con CRM
+- **Mensajería**: Enviar mensajes a nuevas conexiones
+- **Analytics**: Analizar crecimiento de tu red
+
+## Ejemplo de Integración
+
+```javascript
+// Enviar mensaje de bienvenida a nuevas conexiones
+async function welcomeNewConnections() {
+  const response = await fetch('/api/py-linkedin/recent-connections?startIndex=0', {
+    headers: { 'X-API-Key': 'your-jwt-token' }
+  });
+  
+  const { response: data } = await response.json();
+  
+  // Filtrar conexiones de las últimas 24 horas
+  const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+  const newConnections = data.connections.filter(
+    conn => conn.connectedAt && conn.connectedAt > oneDayAgo
+  );
+  
+  // Enviar mensaje a cada nueva conexión
+  for (const connection of newConnections) {
+    await fetch('/api/py-linkedin/send-message', {
+      method: 'POST',
+      headers: {
+        'X-API-Key': 'your-jwt-token',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        entityUrn: connection.entityUrn,
+        message: `Hi ${connection.firstName}, thanks for connecting!`
+      })
+    });
+    
+    // Delay entre mensajes
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  }
+}
+```
+
+## Exportar a CSV
+
+```javascript
+// Exportar conexiones a CSV
+async function exportConnectionsToCSV() {
+  let allConnections = [];
+  let startIndex = 0;
+  
+  // Obtener todas las conexiones
+  while (true) {
+    const response = await fetch(
+      `/api/py-linkedin/recent-connections?startIndex=${startIndex}`,
+      { headers: { 'X-API-Key': 'your-jwt-token' } }
+    );
+    
+    const { response: data } = await response.json();
+    allConnections.push(...data.connections);
+    
+    if (allConnections.length >= data.total) break;
+    startIndex += 50;
+  }
+  
+  // Convertir a CSV
+  const csv = [
+    ['Name', 'Headline', 'Location', 'Public ID', 'Connected At'],
+    ...allConnections.map(conn => [
+      conn.name,
+      conn.headline || '',
+      conn.location || '',
+      conn.publicId || '',
+      new Date(conn.connectedAt).toISOString()
+    ])
+  ].map(row => row.join(',')).join('\n');
+  
+  // Descargar archivo
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'linkedin-connections.csv';
+  a.click();
+}
+```
+
+## Endpoints Relacionados
+
+- `POST /check-connection` - Verificar si un perfil es conexión
+- `POST /send-message` - Enviar mensaje a conexiones
+- `POST /invitation` - Enviar nueva invitación
+
+<Tip>
+  Procesa conexiones recientes regularmente para mantener el engagement con tu red.
+  Envía mensajes de seguimiento dentro de las primeras 48 horas de conectar.
+</Tip>
+
+<Warning>
+  No envíes mensajes masivos idénticos a todas tus conexiones. LinkedIn puede
+  detectar y penalizar este comportamiento.
+</Warning>
+
+## Buenas Prácticas
+
+1. **Follow-up oportuno**: Contacta nuevas conexiones dentro de 24-48h
+2. **Personalización**: Personaliza mensajes según el perfil
+3. **Segmentación**: Agrupa conexiones por industria/intereses
+4. **Sincronización con CRM**: Exporta y actualiza tu CRM regularmente
+5. **Análisis de crecimiento**: Monitorea el crecimiento de tu red
+6. **Rate limiting**: No hagas requests excesivos en poco tiempo

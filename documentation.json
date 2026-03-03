@@ -1,15 +1,123 @@
 {
-  "name": "Starter Kit",
+  "name": "Documentation.ai Docs",
   "colors": {
     "light": {
-      "brand": "#F97316"
+      "brand": "#0A66C2"
     },
     "dark": {
-      "brand": "#FDBA74"
+      "brand": "#378FE9"
     }
   },
   "navigation": {
     "tabs": [
+      {
+        "tab": "LinkedIn API",
+        "icon": "linkedin",
+        "groups": [
+          {
+            "group": "Overview",
+            "icon": "info",
+            "pages": [
+              {
+                "title": "Introduction",
+                "path": "linkedin-api/introduction",
+                "icon": "home"
+              },
+              {
+                "title": "Authentication",
+                "path": "linkedin-api/authentication",
+                "icon": "key"
+              }
+            ]
+          },
+          {
+            "group": "Invitations",
+            "icon": "user-plus",
+            "pages": [
+              {
+                "title": "Send Invitation",
+                "path": "linkedin-api/invitations/send-invitation"
+              },
+              {
+                "title": "Check Invitation",
+                "path": "linkedin-api/invitations/check-invitation"
+              },
+              {
+                "title": "Pending Invitations",
+                "path": "linkedin-api/invitations/pending-invitations"
+              },
+              {
+                "title": "Count Pending Invitations",
+                "path": "linkedin-api/invitations/count-pending-invitations"
+              },
+              {
+                "title": "Remove Invitation",
+                "path": "linkedin-api/invitations/remove-invitation"
+              }
+            ]
+          },
+          {
+            "group": "Messages",
+            "icon": "message-circle",
+            "pages": [
+              {
+                "title": "Send Message",
+                "path": "linkedin-api/messages/send-message"
+              },
+              {
+                "title": "Get Conversations",
+                "path": "linkedin-api/messages/get-conversations"
+              },
+              {
+                "title": "Mark Conversation Read",
+                "path": "linkedin-api/messages/mark-conversation-read"
+              }
+            ]
+          },
+          {
+            "group": "Search",
+            "icon": "search",
+            "pages": [
+              {
+                "title": "Search People",
+                "path": "linkedin-api/search/search-people"
+              },
+              {
+                "title": "Search Sales Navigator",
+                "path": "linkedin-api/search/search-sales-navigator"
+              }
+            ]
+          },
+          {
+            "group": "Profile",
+            "icon": "user",
+            "pages": [
+              {
+                "title": "Visit Profile",
+                "path": "linkedin-api/profile/visit-profile"
+              },
+              {
+                "title": "Get User Data",
+                "path": "linkedin-api/profile/user-data"
+              }
+            ]
+          },
+          {
+            "group": "Connections",
+            "icon": "users",
+            "pages": [
+              {
+                "title": "Check Connection",
+                "path": "linkedin-api/connections/check-connection"
+              },
+              {
+                "title": "Recent Connections",
+                "path": "linkedin-api/connections/recent-connections"
+              }
+            ]
+          }
+        ]
+      },
       {
         "tab": "Documentation",
         "icon": "book",

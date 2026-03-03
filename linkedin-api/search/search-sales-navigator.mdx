@@ -1,0 +1,198 @@
+---
+title: 'Search Sales Navigator'
+description: 'Buscar leads usando LinkedIn Sales Navigator'
+api: 'POST /api/py-linkedin/search-sales-navigator'
+---
+
+# Buscar en Sales Navigator
+
+Busca leads utilizando LinkedIn Sales Navigator, ofreciendo capacidades de búsqueda avanzadas.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/search-sales-navigator
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `checkLimits` | boolean | `false` | Si es `true`, verifica y consume límites de uso |
+
+## Body Parameters
+
+| Campo | Tipo | Default | Descripción |
+|-------|------|---------|-------------|
+| `query` | string | - | Cadena de búsqueda para Sales Navigator |
+| `start` | integer | `0` | Offset para paginación |
+| `count` | integer | `0` | Número de resultados a obtener |
+
+<Note>
+  La estructura de la `query` depende de los filtros que quieras aplicar en Sales Navigator.
+  Consulta la documentación de LinkedIn Sales Navigator para los formatos específicos.
+</Note>
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/search-sales-navigator \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "software engineer location:San Francisco",
+    "start": 0,
+    "count": 25
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/search-sales-navigator', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: 'software engineer location:San Francisco',
+    start: 0,
+    count: 25
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/search-sales-navigator'
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'query': 'software engineer location:San Francisco',
+    'start': 0,
+    'count': 25
+}
+
+response = requests.post(url, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "total": 1234,
+    "leads": [
+      {
+        "entityUrn": "urn:li:fsd_profile:ACoAAA...",
+        "publicId": "john-doe",
+        "name": "John Doe",
+        "firstName": "John",
+        "lastName": "Doe",
+        "headline": "Software Engineer at Tech Corp",
+        "degree": "2nd",
+        "location": "San Francisco Bay Area",
+        "company": "Tech Corp",
+        "title": "Software Engineer",
+        "pictureUrl": "https://media.licdn.com/..."
+      }
+    ]
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `total` | integer | Número total de leads encontrados |
+| `leads` | array | Lista de leads (la estructura pode variar según Sales Navigator) |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | Query de búsqueda inválida |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 403 | `FORBIDDEN` | No tienes acceso a Sales Navigator |
+| 422 | `VALIDATION_ERROR` | Error en la validación de parámetros |
+| 429 | `RATE_LIMIT` | Límite de búsquedas alcanzado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Paginación
+
+Para paginar resultados, incrementa el valor de `start`:
+
+```javascript
+// Primera página (25 resultados)
+{ query: 'engineer', start: 0, count: 25 }
+
+// Segunda página
+{ query: 'engineer', start: 25, count: 25 }
+
+// Tercera página
+{ query: 'engineer', start: 50, count: 25 }
+```
+
+## Requisitos
+
+<Warning>
+  **Se requiere una cuenta de LinkedIn Sales Navigator activa** para usar este endpoint.
+  Las cuentas regulares de LinkedIn no tienen acceso a esta funcionalidad.
+</Warning>
+
+## Ventajas de Sales Navigator
+
+- **Filtros avanzados**: Más opciones de filtrado que la búsqueda estándar
+- **Leads guardados**: Capacidad para guardar y gestionar leads
+- **InMail credits**: Enviar mensajes a perfiles fuera de tu red
+- **Insights**: Información detallada sobre empresas y leads
+- **Alertas**: Notificaciones sobre cambios en tus leads
+
+## Casos de Uso
+
+- Prospección de ventas avanzada
+- Identificación de tomadores de decisiones
+- Búsqueda de leads calificados por industria
+- Investigación de mercado B2B
+- Outreach de alto valor
+
+<Tip>
+  Sales Navigator ofrece capacidades de búsqueda significativamente más potentes
+  que la búsqueda estándar, incluyendo filtros de intención de compra y technology stack.
+</Tip>
+
+<Info>
+  Los resultados de Sales Navigator suelen ser más precisos y contener más
+  información que las búsquedas estándar.
+</Info>
+
+## Comparación con Search People
+
+| Característica | Search People | Search Sales Navigator |
+|----------------|---------------|------------------------|
+| Filtros | Básicos | Avanzados |
+| Límites | Más restrictivos | Más generosos |
+| Información | Estándar | Detallada |
+| Requisitos | Cuenta LinkedIn | Sales Navigator |
+| Costo | Incluido | Suscripción adicional |

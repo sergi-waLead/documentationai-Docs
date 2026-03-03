@@ -1,0 +1,99 @@
+---
+title: 'Count Pending Invitations'
+description: 'Obtener el número total de invitaciones pendientes'
+api: 'GET /api/py-linkedin/count-pending-invitations'
+---
+
+# Contar Invitaciones Pendientes
+
+Obtiene el número total de invitaciones que has enviado y están pendientes de respuesta.
+
+## Endpoint
+
+```
+GET /api/py-linkedin/count-pending-invitations
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://api.example.com/api/py-linkedin/count-pending-invitations \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/count-pending-invitations', {
+  method: 'GET',
+  headers: {
+    'X-API-Key': 'your-jwt-token'
+  }
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/count-pending-invitations'
+headers = {
+    'X-API-Key': 'your-jwt-token'
+}
+
+response = requests.get(url, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "pendingInvitationsCount": 45
+  },
+  "error": null
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `pendingInvitationsCount` | integer | Número total de invitaciones pendientes |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Uso
+
+Este endpoint es útil para:
+- Verificar rápidamente cuántas invitaciones tienes pendientes
+- Decidir si es apropiado enviar más invitaciones
+- Monitorear el uso de tu cuota de invitaciones
+
+<Info>
+  LinkedIn limita el número de invitaciones pendientes que puedes tener simultáneamente
+  (típicamente entre 100-200). Este endpoint te ayuda a monitorear ese límite.
+</Info>
+
+<Tip>
+  Este endpoint es más ligero y rápido que `/pending-invitations` cuando solo necesitas
+  el conteo total sin los detalles de cada invitación.
+</Tip>

@@ -1,0 +1,192 @@
+---
+title: 'Visit Profile'
+description: 'Visitar un perfil de LinkedIn'
+api: 'POST /api/py-linkedin/visit-profile'
+---
+
+# Visitar Perfil
+
+Visita un perfil de LinkedIn y registra la visita. Esto también puede crear o actualizar un lead en tu sistema.
+
+## Endpoint
+
+```
+POST /api/py-linkedin/visit-profile
+```
+
+## Headers
+
+| Header | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `X-API-Key` | string | Sí | Token JWT de autenticación |
+| `Content-Type` | string | Sí | `application/json` |
+
+## Query Parameters
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `checkLimits` | boolean | `false` | Si es `true`, verifica y consume límites de uso |
+
+## Body Parameters
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `publicId` | string | Sí | ID público del perfil a visitar (ej: `john-doe`) |
+
+## Ejemplo de Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.example.com/api/py-linkedin/visit-profile?checkLimits=true \\
+  -H "X-API-Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "publicId": "john-doe"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('/api/py-linkedin/visit-profile?checkLimits=true', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    publicId: 'john-doe'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = 'https://api.example.com/api/py-linkedin/visit-profile'
+params = {'checkLimits': 'true'}
+headers = {
+    'X-API-Key': 'your-jwt-token',
+    'Content-Type': 'application/json'
+}
+body = {
+    'publicId': 'john-doe'
+}
+
+response = requests.post(url, params=params, headers=headers, json=body)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response
+
+### Respuesta Exitosa
+
+```json
+{
+  "success": true,
+  "response": {
+    "status": "profile_visited",
+    "publicId": "john-doe",
+    "entityUrn": "ACoAAA..."
+  },
+  "error": null
+}
+```
+
+### Respuesta de Error
+
+```json
+{
+  "success": false,
+  "response": null,
+  "error": {
+    "code": "PROFILE_NOT_FOUND",
+    "description": "The profile could not be found",
+    "data": {
+      "stage": "fetch_profile",
+      "publicId": "unknown-id"
+    }
+  }
+}
+```
+
+## Campos de Respuesta
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `status` | string | Estado de la operación (`profile_visited`) |
+| `publicId` | string \| null | ID público del perfil visitado |
+| `entityUrn` | string \| null | URN del perfil visitado |
+
+## Códigos de Error
+
+| Código HTTP | Error Code | Descripción |
+|-------------|------------|-------------|
+| 400 | `BAD_REQUEST` | publicId faltante o inválido |
+| 401 | `UNAUTHORIZED` | Token inválido o expirado |
+| 404 | `PROFILE_NOT_FOUND` | Perfil no encontrado |
+| 422 | `VALIDATION_ERROR` | Error en la validación de datos |
+| 429 | `RATE_LIMIT` | Límite de visitas alcanzado |
+| 500 | `SERVER_ERROR` | Error interno del servidor |
+
+## Casos de Uso
+
+- **Warm-up de perfil**: Visitar perfiles antes de enviar invitaciones
+- **Investigación de leads**: Revisar información del perfil
+- **Seguimiento**: Mantener contacto visual con conexiones
+- **Analytics**: Rastrear qué perfiles has visitado
+- **Lead nurturing**: Visitas periódicas para mantener presencia
+
+## Buenas Prácticas
+
+<Warning>
+  **LinkedIn monitorea el número de visitas a perfiles**. Evita visitar demasiados
+  perfiles en poco tiempo para prevenir restricciones en tu cuenta.
+</Warning>
+
+<Tip>
+  Visitar un perfil antes de enviar una invitación puede aumentar la tasa de
+  aceptación, ya que la persona verá que has mostrado interés en su perfil.
+</Tip>
+
+<Info>
+  Las visitas a perfiles pueden activar notificaciones al destinatario,
+  dependiendo de su configuración de privacidad.
+</Info>
+
+### Recomendaciones
+
+1. **Espaciar visitas**: No visites más de 50-100 perfiles por día
+2. **Simular comportamiento humano**: Varía los tiempos entre visitas
+3. **Combinar con otras acciones**: No hagas solo visitas, alterna con otras actividades
+4. **Modo anónimo**: Considera la configuración de visibilidad de tu perfil
+5. **Monitorear límites**: Usa `checkLimits=true` para evitar excesos
+
+## Control de Límites
+
+Cuando `checkLimits=true`:
+1. Verifica si la cuenta tiene visitas disponibles
+2. Realiza la visita si hay cuota disponible
+3. Incrementa el contador de uso solo si la visita fue exitosa
+4. Retorna error `RATE_LIMIT` si no hay cuota disponible
+
+## Endpoints Relacionados
+
+- `POST /invitation` - Enviar invitación después de visitar
+- `POST /check-connection` - Verificar si ya estás conectado
+- `POST /user-data` - Obtener datos del perfil
+
+## Limitaciones de LinkedIn
+
+LinkedIn impone limitaciones en el número de perfiles que puedes visitar:
+- **Cuenta básica**: ~80-100 visitas/día
+- **Cuenta Premium**: ~100-150 visitas/día
+- **Sales Navigator**: Límites más generosos
+
+<Note>
+  Los límites exactos varían y pueden cambiar según el comportamiento de la cuenta
+  y otros factores que LinkedIn considera.
+</Note>
